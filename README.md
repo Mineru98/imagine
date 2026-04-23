@@ -1,6 +1,6 @@
 <div align="center">
 
-![imagine thumbnail](./assets/thumbnail.webp)
+![imagine thumbnail](./assets/thumbnail-01.webp)
 
 # 🎨 imagine
 
