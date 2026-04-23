@@ -1,0 +1,27 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "imagine",
+  "description": "...",
+  "owner": {
+    "name": "Mineru",
+    "email": "mineru@usefullabs.co.kr"
+  },
+  "plugins": [
+    {
+      "name": "imagine",
+      "description": "...",
+      "version": "1.0.0",
+      "author": {
+        "name": "Mineru",
+        "email": "mineru@usefullabs.co.kr"
+      },
+      "source": "./",
+      "category": "...",
+      "homepage": "https://github.com/Mineru98/imagine",
+      "tags": [
+        "...",
+        "..."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "imagine",
+  "version": "1.0.0",
+  "description": "...",
+  "author": {
+    "name": "Mineru",
+    "email": "mineru@usefullabs.co.kr",
+    "url": "https://github.com/Mineru98"
+  },
+  "homepage": "https://github.com/Mineru98/imagine",
+  "repository": "https://github.com/Mineru98/imagine",
+  "license": "MIT",
+  "keywords": [
+    "...",
+    "..."
+  ]
+}
