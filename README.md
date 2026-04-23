@@ -1,6 +1,6 @@
 <div align="center">
 
-![imagine thumbnail](./assets/thumbnail-01.webp)
+![imagine thumbnail](./assets/thumbnail.webp)
 
 # 🎨 imagine
 
@@ -99,6 +99,42 @@ node <skill-root>/scripts/edit.js \
   --prompt "turn into a watercolor painting, soft pastels" \
   --out ./images/photo-watercolor.png
 ```
+
+---
+
+## 🧩 `imagine` 만 있는 게 아닙니다 — 18개 스킬 · 11개 에이전트
+
+이 플러그인에는 용도별로 특화된 **스킬 18개**와, 그 뒤에서 특정 역할만 맡는 **에이전트 11개**가 같이 들어 있습니다. 전체 지도·사용 순서·금기는 [`docs/skills-and-agents.md`](./docs/skills-and-agents.md) 한 장으로 정리해뒀습니다.
+
+빠른 요약:
+
+| 쓰임새 | 스킬 |
+|---|---|
+| 일반 텍스트→이미지 / 이미지→이미지 | [`imagine`](./skills/imagine/SKILL.md) |
+| 디자인 스크린샷 → HTML+Tailwind | [`image-to-code`](./skills/image-to-code/SKILL.md) |
+| 랜딩 히어로 3:2 | [`imagine-hero`](./skills/imagine-hero/SKILL.md) |
+| 발표 섹션 일러스트 세트 | [`imagine-slide`](./skills/imagine-slide/SKILL.md) |
+| 이벤트 포스터/배너/카드 3종 | [`imagine-poster`](./skills/imagine-poster/SKILL.md) |
+| OG·소셜 카드 (+ `--bulk`) | [`imagine-og`](./skills/imagine-og/SKILL.md) |
+| YouTube 썸네일 A/B | [`imagine-thumb`](./skills/imagine-thumb/SKILL.md) |
+| 팟캐스트 커버 3000×3000 | [`imagine-podcast`](./skills/imagine-podcast/SKILL.md) |
+| 로고 시안 (마크 + 워드마크 + SVG) | [`imagine-logo`](./skills/imagine-logo/SKILL.md) |
+| iOS·Android·Web 아이콘 세트 | [`imagine-icon`](./skills/imagine-icon/SKILL.md) |
+| UI 무드 보드 레퍼런스 | [`imagine-ui`](./skills/imagine-ui/SKILL.md) |
+| 엠프티 스테이트 라이트/다크 쌍 | [`imagine-empty`](./skills/imagine-empty/SKILL.md) |
+| 앱스토어 기기 목업 | [`imagine-mockup`](./skills/imagine-mockup/SKILL.md) |
+| 게임 캐릭터 일관 생성 | [`imagine-char`](./skills/imagine-char/SKILL.md) |
+| 정수 픽셀 아트 | [`imagine-pixel`](./skills/imagine-pixel/SKILL.md) |
+| Unity/Godot 스프라이트 시트 | [`imagine-sprite`](./skills/imagine-sprite/SKILL.md) |
+| seamless 타일 · 큰 배경 패턴 | [`imagine-pattern`](./skills/imagine-pattern/SKILL.md) |
+| 인물 사진 로컬 보정 (프라이버시) | [`imagine-portrait`](./skills/imagine-portrait/SKILL.md) |
+
+그리고 뒤에서 같이 움직이는 에이전트들:
+
+- 프롬프트/스타일 보정: [`prompt-director`](./agents/prompt-director.md) · [`style-guardian`](./agents/style-guardian.md) · [`visual-critic`](./agents/visual-critic.md) · [`character-card-keeper`](./agents/character-card-keeper.md)
+- `image-to-code` 파이프라인: [`vision-analyst`](./agents/vision-analyst.md) → [`layout-architect`](./agents/layout-architect.md) · [`design-token-extractor`](./agents/design-token-extractor.md) · [`asset-extractor`](./agents/asset-extractor.md) · [`a11y-advisor`](./agents/a11y-advisor.md) → [`code-generator`](./agents/code-generator.md) → [`visual-verifier`](./agents/visual-verifier.md)
+
+각 스킬의 트리거 키워드·출력 경로·금기 규칙은 [`docs/skills-and-agents.md`](./docs/skills-and-agents.md) 참고.
 
 ---
 
