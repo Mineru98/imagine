@@ -1,6 +1,6 @@
 ---
 name: imagine-char
-description: (imagine) 인디 게임·소설·TTRPG용 **게임 캐릭터 일러스트**를 **같은 캐릭터로 반복 생성**하도록 설계된 스킬. Character Card(JSON)를 기준으로 이름/종족/연령/헤어/눈/의상/구별 특징/아트 스타일/팔레트를 고정해두고, 대표 일러스트(portrait_hero) 1장을 reference로 삼아 turnaround·표정·포즈를 이어서 뽑는다. 사용자가 "게임 캐릭터", "캐릭터 일러스트", "imagine-char", "캐릭터 시트 만들어줘", "표정 시트", "포즈 컷" 등을 말하면 이 스킬이 담당한다.
+description: 인디 게임·소설·TTRPG용 **게임 캐릭터 일러스트**를 **같은 캐릭터로 반복 생성**하도록 설계된 스킬. Character Card(JSON)를 기준으로 이름/종족/연령/헤어/눈/의상/구별 특징/아트 스타일/팔레트를 고정해두고, 대표 일러스트(portrait_hero) 1장을 reference로 삼아 turnaround·표정·포즈를 이어서 뽑는다. 사용자가 "게임 캐릭터", "캐릭터 일러스트", "imagine-char", "캐릭터 시트 만들어줘", "표정 시트", "포즈 컷" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<create|turnaround|expression|pose> <name-or-concept> [--set neutral,happy,angry,sad,surprised] [--verify-consistency] [--out-dir <path>]"
 ---
 

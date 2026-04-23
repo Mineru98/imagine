@@ -1,6 +1,6 @@
 ---
 name: imagine-portrait
-description: (imagine) 인물 사진을 **로컬에서만** 보정·변환하는 `edit.js` 확장 모드. 하위 모드로 `bg-swap`(배경 교체), `stylize`(수채/유화/아크릴/만화 변환), `restore`(노후 사진 복원), `group-tone`(단체 사진 톤 통일)을 제공한다. 모든 경로는 `./images/portraits/` 안으로 **강제**되며(output-allocator가 경로 탈출을 거절), manifest에는 파일 경로의 **SHA-256 해시 + 모드·시각 메타만** 저장한다. 얼굴 썸네일·이미지 바이트·EXIF·raw prompt는 어떠한 산출물에도 남기지 않는다. 사용자가 "증명사진 배경", "프로필 사진 스타일 변환", "오래된 사진 복원", "단체 사진 톤 통일", "imagine-portrait" 등을 말하면 이 스킬이 담당한다.
+description: 인물 사진을 **로컬에서만** 보정·변환하는 `edit.js` 확장 모드. 하위 모드로 `bg-swap`(배경 교체), `stylize`(수채/유화/아크릴/만화 변환), `restore`(노후 사진 복원), `group-tone`(단체 사진 톤 통일)을 제공한다. 모든 경로는 `./images/portraits/` 안으로 **강제**되며(output-allocator가 경로 탈출을 거절), manifest에는 파일 경로의 **SHA-256 해시 + 모드·시각 메타만** 저장한다. 얼굴 썸네일·이미지 바이트·EXIF·raw prompt는 어떠한 산출물에도 남기지 않는다. 사용자가 "증명사진 배경", "프로필 사진 스타일 변환", "오래된 사진 복원", "단체 사진 톤 통일", "imagine-portrait" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<bg-swap|stylize|restore|group-tone> <photo> [--bg <desc>] [--style watercolor|oil|acrylic|comic] [--target-tone <ref.jpg>] [--strength high|medium|low]"
 ---
 

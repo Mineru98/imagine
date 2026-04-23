@@ -1,6 +1,6 @@
 ---
 name: imagine-icon
-description: (imagine) 모바일 앱·웹 앱 **아이콘 세트 일괄 생성기**. AI로 1024×1024 마스터 아이콘을 뽑고, 플랫폼별 다중 해상도(iOS 1024 / Android adaptive 전경·배경 / Web favicon·PWA·Apple touch)를 `scripts/lib/icon-exporter.js`로 Lanczos3 리사이즈 익스포트한다. 사용자가 "앱 아이콘", "imagine-icon", "favicon", "launcher icon" 등을 말하면 이 스킬이 담당한다.
+description: 모바일 앱·웹 앱 **아이콘 세트 일괄 생성기**. AI로 1024×1024 마스터 아이콘을 뽑고, 플랫폼별 다중 해상도(iOS 1024 / Android adaptive 전경·배경 / Web favicon·PWA·Apple touch)를 `scripts/lib/icon-exporter.js`로 Lanczos3 리사이즈 익스포트한다. 사용자가 "앱 아이콘", "imagine-icon", "favicon", "launcher icon" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<concept> [--targets ios,android,web] [--variation minimal|3d-glossy|flat-illustration|abstract-geometric] [--android-background auto|#RRGGBB] [--out-dir <path>]"
 ---
 

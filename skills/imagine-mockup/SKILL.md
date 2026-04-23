@@ -1,6 +1,6 @@
 ---
 name: imagine-mockup
-description: (imagine) 앱스토어·포트폴리오·마케팅 자료에 쓰는 **제품 목업**(기기 프레임에 끼운 스크린샷 + 배경)을 생성한다. AI는 **배경만** 그리며, 기기 프레임과 스크린샷 합성은 `scripts/lib/device-composer.js`가 결정적으로 수행한다. 기기 프리셋은 `data/devices.json`에서 로드해 커뮤니티 PR로 확장 가능. 배경이 필요 없으면(solid/gradient/업로드 이미지) **AI 호출을 아예 스킵**한다. 사용자가 "제품 목업", "앱스토어 스크린샷", "기기 프레임 씌워줘", "imagine-mockup" 등을 말하면 이 스킬이 담당한다.
+description: 앱스토어·포트폴리오·마케팅 자료에 쓰는 **제품 목업**(기기 프레임에 끼운 스크린샷 + 배경)을 생성한다. AI는 **배경만** 그리며, 기기 프레임과 스크린샷 합성은 `scripts/lib/device-composer.js`가 결정적으로 수행한다. 기기 프리셋은 `data/devices.json`에서 로드해 커뮤니티 PR로 확장 가능. 배경이 필요 없으면(solid/gradient/업로드 이미지) **AI 호출을 아예 스킵**한다. 사용자가 "제품 목업", "앱스토어 스크린샷", "기기 프레임 씌워줘", "imagine-mockup" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<screenshot> [--device iphone-16-pro|iphone-se|galaxy-s25|ipad-pro-13|macbook-pro-14|macbook-pro-16|imac-24|browser-mac|browser-windows] [--bg <template-or-kind>] [--template appstore-hero|lifestyle|studio|outdoor] [--tilt <deg>] [--bulk <glob>]"
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: imagine-slide
-description: (imagine) Keynote·PowerPoint·Google Slides용 **슬라이드 섹션 일러스트**를 같은 스타일로 일괄 생성한다. 입력은 섹션 제목 리스트(예: "문제 정의, 접근 방법, 결과, 다음 단계")이며, 출력은 투명 배경 PNG 세트로 슬라이드 텍스트 박스와 겹치지 않도록 좌·우 40% 세이프존에 일러스트를 배치한다. 이미지 내부에 텍스트·숫자·차트를 넣지 않는다. Style Guardian은 `imagine-service-section`과 **동일한 시리즈 일관성 체인**을 공유해 "홈/기능/가격/블로그" 등 같은 데크·캠페인의 톤을 유지한다. 사용자가 "슬라이드 일러스트", "발표 자료 비주얼", "imagine-slide", "섹션 이미지 세트" 등을 말하면 이 스킬이 담당한다.
+description: Keynote·PowerPoint·Google Slides용 **슬라이드 섹션 일러스트**를 같은 스타일로 일괄 생성한다. 입력은 섹션 제목 리스트(예: "문제 정의, 접근 방법, 결과, 다음 단계")이며, 출력은 투명 배경 PNG 세트로 슬라이드 텍스트 박스와 겹치지 않도록 좌·우 40% 세이프존에 일러스트를 배치한다. 이미지 내부에 텍스트·숫자·차트를 넣지 않는다. Style Guardian은 `imagine-service-section`과 **동일한 시리즈 일관성 체인**을 공유해 "홈/기능/가격/블로그" 등 같은 데크·캠페인의 톤을 유지한다. 사용자가 "슬라이드 일러스트", "발표 자료 비주얼", "imagine-slide", "섹션 이미지 세트" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<--sections \"A, B, C\" | chapter \"<title>\"> [--style flat-gradient|line-mono|iso-geometric|abstract-geometric|paper-cut] [--aspect 16:9|16:10|4:3] [--position right-40|left-40] [--metaphor \"<사용자 메타포>\"] [--keep] [--svg]"
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: imagine
-description: (imagine) Generate or edit images with Codex. Use this skill whenever the user says "imagine ...", asks to create an image from a text description, transform or restyle an existing image, produce artwork / illustrations / logos / concept art, make image variations, or asks for any kind of AI image generation or image-to-image editing. All outputs are saved inside the current project's `./images/` folder by default.
+description: Generate or edit images with Codex. Use this skill whenever the user says "imagine ...", asks to create an image from a text description, transform or restyle an existing image, produce artwork / illustrations / logos / concept art, make image variations, or asks for any kind of AI image generation or image-to-image editing. All outputs are saved inside the current project's `./images/` folder by default.
 argument-hint: "[--prompt <text>] [--n 1-8] [--size 1024x1024|1024x1536|1536x1024] [--quality low|medium|high] [--format png|jpeg|webp]"
 ---
 
