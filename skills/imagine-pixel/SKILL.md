@@ -1,6 +1,6 @@
 ---
 name: imagine-pixel
-description: 2D 도트 인디 게임·픽셀 아트 NFT·레트로 SNS 프로필용 **정수 픽셀 그리드 스프라이트**를 생성한다. AI가 뽑은 "픽셀 스타일 이미지"를 `scripts/lib/pixelize.js`로 **후처리 스냅**(nearest-neighbor 다운샘플 → 팔레트 클램프 → N× 업스케일)해 실제 16/32/48/64 그리드에 정렬한다. 스냅 없이 AI 원본을 그대로 저장하지 않는다. JPEG 저장은 금지(PNG only). 사용자가 "픽셀 캐릭터", "도트 스프라이트", "imagine-pixel", "픽셀 아트" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) 2D 도트 인디 게임·픽셀 아트 NFT·레트로 SNS 프로필용 **정수 픽셀 그리드 스프라이트**를 생성한다. AI가 뽑은 "픽셀 스타일 이미지"를 `scripts/lib/pixelize.js`로 **후처리 스냅**(nearest-neighbor 다운샘플 → 팔레트 클램프 → N× 업스케일)해 실제 16/32/48/64 그리드에 정렬한다. 스냅 없이 AI 원본을 그대로 저장하지 않는다. JPEG 저장은 금지(PNG only). 사용자가 "픽셀 캐릭터", "도트 스프라이트", "imagine-pixel", "픽셀 아트" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<concept> [--target-size 16|32|48|64] [--palette-size 8|16|32] [--palette-ref <palette.png>] [--style gba|nes|snes|modern-lowres|outline-heavy] [--out-dir <path>]"
 ---
 

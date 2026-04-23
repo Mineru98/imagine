@@ -1,6 +1,6 @@
 ---
 name: image-to-code
-description: Convert an image (screenshot, mockup, Figma export) into an HTML page styled with Tailwind CSS. Use this skill whenever the user says "image-to-code …", asks to turn a design image into code, recreate a UI from a screenshot, generate HTML/Tailwind from a mockup, or says things like "이 이미지를 웹페이지로 만들어줘" / "HTML로 바꿔줘" / "Tailwind로 바꿔줘". Result is saved inside ./pages/<slug>/.
+description: (imagine) Convert an image (screenshot, mockup, Figma export) into an HTML page styled with Tailwind CSS. Use this skill whenever the user says "image-to-code …", asks to turn a design image into code, recreate a UI from a screenshot, generate HTML/Tailwind from a mockup, or says things like "이 이미지를 웹페이지로 만들어줘" / "HTML로 바꿔줘" / "Tailwind로 바꿔줘". Result is saved inside ./pages/<slug>/.
 argument-hint: "<image> [--out <dir>] [--strict] [--explore] [--tokens <path>]"
 ---
 

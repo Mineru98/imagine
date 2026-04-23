@@ -1,6 +1,6 @@
 ---
 name: imagine-ui
-description: 모바일 앱 화면의 **스타일 레퍼런스 이미지**를 빠르게 뽑는다. 실제 픽셀 퍼펙트 UI·구현 가능한 디자인이 아니라, Figma를 켜기 전에 "대충 이런 느낌인가?"를 여러 장 나열해보기 위한 **무드 보드**다. iOS · Android Material 3 · 한국 fintech(Pretendard 스타일) · 웹 모바일 프리셋을 제공하고, Style Guardian manifest에 `system` · `palette_hex` · `corner_radius_estimate`를 저장해 다음 호출에서 같은 톤으로 이어갈 수 있다. 사용자가 "UI 목업", "앱 화면 레퍼런스", "imagine-ui", "스크린 레퍼런스" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) 모바일 앱 화면의 **스타일 레퍼런스 이미지**를 빠르게 뽑는다. 실제 픽셀 퍼펙트 UI·구현 가능한 디자인이 아니라, Figma를 켜기 전에 "대충 이런 느낌인가?"를 여러 장 나열해보기 위한 **무드 보드**다. iOS · Android Material 3 · 한국 fintech(Pretendard 스타일) · 웹 모바일 프리셋을 제공하고, Style Guardian manifest에 `system` · `palette_hex` · `corner_radius_estimate`를 저장해 다음 호출에서 같은 톤으로 이어갈 수 있다. 사용자가 "UI 목업", "앱 화면 레퍼런스", "imagine-ui", "스크린 레퍼런스" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<screen-or-concept> [--system ios|android|web-mobile|kr-minimal] [--screen login|feed|detail|settings|onboarding|empty] [--mood light|dark|warm|cold] [--density loose|compact] [--keep] [--n 1..4]"
 ---
 

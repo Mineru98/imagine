@@ -1,6 +1,6 @@
 ---
 name: imagine-poster
-description: 밋업·컨퍼런스·학과 행사·사내 워크숍·Discord/Slack/카톡 공지용 **이벤트 포스터/홍보물**을 생성한다. 배경과 장식 모티프만 Codex 이미지 모델로 뽑고, 제목·부제·날짜·장소·연사·CTA 같은 **정보 텍스트는 YAML/JSON 입력**을 받아 `scripts/lib/poster-layouter.js`가 결정적 레이아웃으로 합성한다. 포스터(3:4.24 A4)·배너(16:9)·카드(1:1) 3종을 한 번에 출력한다.
+description: (imagine) 밋업·컨퍼런스·학과 행사·사내 워크숍·Discord/Slack/카톡 공지용 **이벤트 포스터/홍보물**을 생성한다. 배경과 장식 모티프만 Codex 이미지 모델로 뽑고, 제목·부제·날짜·장소·연사·CTA 같은 **정보 텍스트는 YAML/JSON 입력**을 받아 `scripts/lib/poster-layouter.js`가 결정적 레이아웃으로 합성한다. 포스터(3:4.24 A4)·배너(16:9)·카드(1:1) 3종을 한 번에 출력한다.
 argument-hint: "<event.yaml|event.json> [--formats poster,banner,card] [--theme cyber-gradient|retro-print|k-indie-poster|academic-clean|festival-vibrant] [--out-dir <path>]"
 ---
 

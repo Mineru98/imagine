@@ -1,6 +1,6 @@
 ---
 name: imagine-hero
-description: SaaS · 개인 사이드 프로젝트의 **랜딩 페이지 히어로 이미지**를 3:2(1536×1024) 전용 프리셋으로 생성한다. 이미지 내부에 텍스트를 넣지 않고(모든 copy는 HTML이 담당), 한쪽 40%를 세이프존으로 비워 CTA·헤드라인을 얹을 수 있게 한다. `--transparent-bg` 플래그 지정 시 `scripts/lib/bg-remove.js`로 배경을 잘라낸 PNG도 함께 저장한다. 사용자가 "히어로 이미지", "랜딩 히어로", "imagine-hero", "landing page hero" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) SaaS · 개인 사이드 프로젝트의 **랜딩 페이지 히어로 이미지**를 3:2(1536×1024) 전용 프리셋으로 생성한다. 이미지 내부에 텍스트를 넣지 않고(모든 copy는 HTML이 담당), 한쪽 40%를 세이프존으로 비워 CTA·헤드라인을 얹을 수 있게 한다. `--transparent-bg` 플래그 지정 시 `scripts/lib/bg-remove.js`로 배경을 잘라낸 PNG도 함께 저장한다. 사용자가 "히어로 이미지", "랜딩 히어로", "imagine-hero", "landing page hero" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<concept> [--style gradient-abstract|isometric-illust|3d-glow|product-shot|human-device] [--safe-zone left|right|center] [--transparent-bg] [--brand-color #HEX] [--vibe shock|calm|cozy|hype]"
 ---
 

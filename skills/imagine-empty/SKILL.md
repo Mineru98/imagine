@@ -1,6 +1,6 @@
 ---
 name: imagine-empty
-description: UI 엠프티 스테이트·에러·로딩·온보딩 일러스트를 **라이트/다크 쌍**으로 생성한다. 같은 모티프를 두 모드에 걸쳐 자연스럽게 보이게 하되, **단순 색 반전이 아니라 라이트·다크를 각각 별도 프롬프트로 분리 생성**한다. 프리셋 카탈로그는 `data/empty-states.json` 에 분리되어 커뮤니티 PR로 확장 가능. 투명 배경 PNG가 기본이며 alpha 채널을 검증한다. 사용자가 "엠프티 스테이트", "empty state", "404 일러스트", "로딩 일러스트", "imagine-empty", "preset-pack" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) UI 엠프티 스테이트·에러·로딩·온보딩 일러스트를 **라이트/다크 쌍**으로 생성한다. 같은 모티프를 두 모드에 걸쳐 자연스럽게 보이게 하되, **단순 색 반전이 아니라 라이트·다크를 각각 별도 프롬프트로 분리 생성**한다. 프리셋 카탈로그는 `data/empty-states.json` 에 분리되어 커뮤니티 PR로 확장 가능. 투명 배경 PNG가 기본이며 alpha 채널을 검증한다. 사용자가 "엠프티 스테이트", "empty state", "404 일러스트", "로딩 일러스트", "imagine-empty", "preset-pack" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<preset> [--mode light|dark|both] [--style flat-duotone|line-art|paper-cut|iso-geometric] [--colors #HEX,#HEX] [--brand <brand.json>] [--svg] | preset-pack <brand.json>"
 ---
 

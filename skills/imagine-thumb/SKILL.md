@@ -1,6 +1,6 @@
 ---
 name: imagine-thumb
-description: YouTube 썸네일 전용 생성기. 배경/인물 일러스트는 Codex 이미지 모델로 뽑고, 제목 텍스트는 **AI가 아니라 Node 후처리**(`scripts/lib/compose-text.js`)로 합성한다. 한국어 글자 깨짐을 원천 차단한다. 사용자가 "썸네일 만들어줘", "imagine-thumb <제목>", "유튜브 썸네일" 등을 말하면 이 스킬이 담당한다. 기본 A/B용 2장을 같은 제목 텍스트로 합성해 저장한다.
+description: (imagine) YouTube 썸네일 전용 생성기. 배경/인물 일러스트는 Codex 이미지 모델로 뽑고, 제목 텍스트는 **AI가 아니라 Node 후처리**(`scripts/lib/compose-text.js`)로 합성한다. 한국어 글자 깨짐을 원천 차단한다. 사용자가 "썸네일 만들어줘", "imagine-thumb <제목>", "유튜브 썸네일" 등을 말하면 이 스킬이 담당한다. 기본 A/B용 2장을 같은 제목 텍스트로 합성해 저장한다.
 argument-hint: "--title <text> [--style vlog|tech|reaction|meme|cinematic] [--subject-side left|right] [--vibe shock|calm|cozy|hype] [--n 2|3] [--subtitle <text>]"
 ---
 

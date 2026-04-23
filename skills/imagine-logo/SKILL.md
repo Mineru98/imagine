@@ -1,6 +1,6 @@
 ---
 name: imagine-logo
-description: 회사·개인 프로젝트·팀의 **로고 시안 탐색기**. 마크(심볼)만 Codex 이미지 모델로 생성하고 워드마크(회사명 글자)는 `scripts/lib/compose-text.js`로 합성한다. 회사명 텍스트는 AI 프롬프트에 **절대** 포함하지 않으며, 이미지 생성 후 OCR로 글자 검출 시 1회 자동 재생성한다. 3~6개의 서로 다른 방향성 시안을 한 번에 뽑아 "나쁘지 않은 출발점"을 빠르게 고르도록 돕는다. `scripts/lib/vectorize.js`로 선택된 1장을 SVG로 벡터화하는 옵션도 제공한다. 사용자가 "로고 만들어줘", "imagine-logo", "회사 로고", "팀 로고" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) 회사·개인 프로젝트·팀의 **로고 시안 탐색기**. 마크(심볼)만 Codex 이미지 모델로 생성하고 워드마크(회사명 글자)는 `scripts/lib/compose-text.js`로 합성한다. 회사명 텍스트는 AI 프롬프트에 **절대** 포함하지 않으며, 이미지 생성 후 OCR로 글자 검출 시 1회 자동 재생성한다. 3~6개의 서로 다른 방향성 시안을 한 번에 뽑아 "나쁘지 않은 출발점"을 빠르게 고르도록 돕는다. `scripts/lib/vectorize.js`로 선택된 1장을 SVG로 벡터화하는 옵션도 제공한다. 사용자가 "로고 만들어줘", "imagine-logo", "회사 로고", "팀 로고" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<company-or-concept> [--name <wordmark>] [--direction-count 3..6] [--directions geometric,organic,animal,abstract,monogram,typography-centric] [--color-mode monochrome|duotone|tritone] [--palette #HEX,#HEX] [--vectorize <mark_idx>]"
 ---
 

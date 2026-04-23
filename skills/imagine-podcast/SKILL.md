@@ -1,6 +1,6 @@
 ---
 name: imagine-podcast
-description: Apple Podcasts·Spotify·오디오북·"Audio Only" 유튜브용 **3000×3000 팟캐스트 커버 아트**와 에피소드별 variant를 생성한다. AI는 1024×1024 배경·모티프만 그리고 `scripts/lib/upscale.js`로 3000×3000까지 확대(sharp Lanczos3 기본, Real-ESRGAN opt-in)한 뒤 `scripts/lib/compose-text.js`로 쇼 이름·에피소드 제목을 시스템 폰트로 합성한다. 출력은 Apple Podcasts 규격(JPEG, RGB, 3000×3000, 500KB~500MB)을 **자동 검증**하고 55×55 축소 프리뷰에서 엔트로피·대비를 측정해 가독성 경고를 발행한다. 사용자가 "팟캐스트 커버", "imagine-podcast", "오디오북 커버", "플레이리스트 커버", "에피소드 커버" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) Apple Podcasts·Spotify·오디오북·"Audio Only" 유튜브용 **3000×3000 팟캐스트 커버 아트**와 에피소드별 variant를 생성한다. AI는 1024×1024 배경·모티프만 그리고 `scripts/lib/upscale.js`로 3000×3000까지 확대(sharp Lanczos3 기본, Real-ESRGAN opt-in)한 뒤 `scripts/lib/compose-text.js`로 쇼 이름·에피소드 제목을 시스템 폰트로 합성한다. 출력은 Apple Podcasts 규격(JPEG, RGB, 3000×3000, 500KB~500MB)을 **자동 검증**하고 55×55 축소 프리뷰에서 엔트로피·대비를 측정해 가독성 경고를 발행한다. 사용자가 "팟캐스트 커버", "imagine-podcast", "오디오북 커버", "플레이리스트 커버", "에피소드 커버" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<show-name-or-concept> [--style vintage-radio|modern-minimal|neon-night|paper-grain] [--primary #HEX] [--secondary #HEX] [--esrgan] | episode --master <cover.jpg> --ep <n> --title <text>"
 ---
 

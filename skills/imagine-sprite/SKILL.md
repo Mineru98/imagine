@@ -1,6 +1,6 @@
 ---
 name: imagine-sprite
-description: `imagine-pixel`로 만든 캐릭터의 **애니메이션 스프라이트 시트**를 Unity/Godot/Aseprite가 바로 import할 수 있는 포맷으로 생성한다. 프레임은 **프레임 단위 개별 호출**로 뽑고, 첫 프레임을 **image→image reference**로 삼아 연속 프레임의 의상·머리색·팔레트가 드리프트하지 않도록 한다. `scripts/lib/pixelize.js`로 정수 픽셀 그리드 스냅, `scripts/lib/sheet-composer.js`로 가로 연결 시트 PNG + Aseprite 호환 JSON 메타를 출력한다. reference 체인 유지를 위해 **concurrency는 1로 강제**된다. 사용자가 "스프라이트 시트", "애니메이션 프레임", "imagine-sprite", "idle/walk/attack 애니메이션" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) `imagine-pixel`로 만든 캐릭터의 **애니메이션 스프라이트 시트**를 Unity/Godot/Aseprite가 바로 import할 수 있는 포맷으로 생성한다. 프레임은 **프레임 단위 개별 호출**로 뽑고, 첫 프레임을 **image→image reference**로 삼아 연속 프레임의 의상·머리색·팔레트가 드리프트하지 않도록 한다. `scripts/lib/pixelize.js`로 정수 픽셀 그리드 스냅, `scripts/lib/sheet-composer.js`로 가로 연결 시트 PNG + Aseprite 호환 JSON 메타를 출력한다. reference 체인 유지를 위해 **concurrency는 1로 강제**된다. 사용자가 "스프라이트 시트", "애니메이션 프레임", "imagine-sprite", "idle/walk/attack 애니메이션" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<character-name> <action> [--frames 2|4|5|6|8] [--frame-size 16..128] [--padding 0|1|2] [--palette-ref <palette.png>]"
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: imagine-pattern
-description: 웹 배경·포장지·스티커·UI 텍스처용 **패턴/텍스처 이미지**를 두 모드로 생성한다. `seamless` 모드는 타일링 가능한 512/1024/2048 PNG를 만들고 `scripts/lib/seamless.js`로 (w/2, h/2) offset → 이음새 heal(feather blur + grain 재주입) → 4×4 타일링 프리뷰를 자동 산출한다. `large` 모드는 타일링 불필요한 단일 큰 배경을 만든다. color variants는 AI 재호출 없이 sharp `.modulate({ hue })` **로컬 연산**으로만 생성해 쿼터를 보호한다. 사용자가 "패턴 만들어줘", "seamless 타일", "배경 텍스처", "imagine-pattern" 등을 말하면 이 스킬이 담당한다.
+description: (imagine) 웹 배경·포장지·스티커·UI 텍스처용 **패턴/텍스처 이미지**를 두 모드로 생성한다. `seamless` 모드는 타일링 가능한 512/1024/2048 PNG를 만들고 `scripts/lib/seamless.js`로 (w/2, h/2) offset → 이음새 heal(feather blur + grain 재주입) → 4×4 타일링 프리뷰를 자동 산출한다. `large` 모드는 타일링 불필요한 단일 큰 배경을 만든다. color variants는 AI 재호출 없이 sharp `.modulate({ hue })` **로컬 연산**으로만 생성해 쿼터를 보호한다. 사용자가 "패턴 만들어줘", "seamless 타일", "배경 텍스처", "imagine-pattern" 등을 말하면 이 스킬이 담당한다.
 argument-hint: "<concept> [--seamless|--large] [--tile 512|1024|2048 | --large-size 1920x1080|2560x1440|3840x2160] [--variants 1..10] [--transparent-bg]"
 ---
 

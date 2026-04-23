@@ -1,6 +1,6 @@
 ---
 name: imagine-og
-description: 블로그·랜딩 글의 **OG 이미지 / 소셜 카드**(Twitter / Instagram / LinkedIn)를 플랫폼 프리셋에 맞춰 자동 생성한다. 배경 일러스트만 Codex 이미지 모델로 뽑고, 제목·태그 같은 글자는 AI에 맡기지 않고 공용 후처리 모듈(`scripts/lib/compose-text.js`)로 합성한다. 사용자가 "OG 이미지", "소셜 카드", "imagine-og", "Twitter 카드" 등을 말하면 이 스킬이 담당한다. 블로그 수백 편을 일괄 렌더하는 `--bulk` 모드도 지원한다.
+description: (imagine) 블로그·랜딩 글의 **OG 이미지 / 소셜 카드**(Twitter / Instagram / LinkedIn)를 플랫폼 프리셋에 맞춰 자동 생성한다. 배경 일러스트만 Codex 이미지 모델로 뽑고, 제목·태그 같은 글자는 AI에 맡기지 않고 공용 후처리 모듈(`scripts/lib/compose-text.js`)로 합성한다. 사용자가 "OG 이미지", "소셜 카드", "imagine-og", "Twitter 카드" 등을 말하면 이 스킬이 담당한다. 블로그 수백 편을 일괄 렌더하는 `--bulk` 모드도 지원한다.
 argument-hint: "<title> [--tag <tag>] [--platforms og,twitter,instagram-post,...] [--template <name>] [--bulk <glob>] [--from-frontmatter]"
 ---
 
