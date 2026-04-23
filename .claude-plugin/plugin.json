@@ -1,7 +1,7 @@
 {
   "name": "imagine",
   "version": "1.0.0",
-  "description": "...",
+  "description": "ChatGPT Plus/Pro 구독을 재사용해 Claude Code 안에서 이미지를 생성·편집하는 Codex 기반 스킬. OpenAI API 키가 필요 없으며, 결과는 프로젝트 ./images/ 폴더에 저장됩니다.",
   "author": {
     "name": "Mineru",
     "email": "mineru@usefullabs.co.kr",
@@ -11,7 +11,17 @@
   "repository": "https://github.com/Mineru98/imagine",
   "license": "MIT",
   "keywords": [
-    "...",
-    "..."
+    "image-generation",
+    "image-editing",
+    "codex",
+    "openai",
+    "chatgpt",
+    "gpt-image",
+    "ai-art",
+    "text-to-image",
+    "image-to-image",
+    "claude-code",
+    "skill",
+    "plugin"
   ]
 }

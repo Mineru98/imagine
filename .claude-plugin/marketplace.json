@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "imagine",
-  "description": "...",
+  "description": "ChatGPT Plus/Pro 구독만으로 Claude Code 안에서 이미지를 생성·편집하세요. 별도의 OpenAI API 키 없이, Codex OAuth 프록시로 gpt-image 모델을 호출합니다.",
   "owner": {
     "name": "Mineru",
     "email": "mineru@usefullabs.co.kr"
@@ -9,18 +9,26 @@
   "plugins": [
     {
       "name": "imagine",
-      "description": "...",
+      "description": "Claude Code에서 \"imagine ...\" 한마디로 text→image, image→image 생성을 수행하는 스킬. ChatGPT 구독 세션을 재사용하므로 API 청구서가 따로 발생하지 않으며, 결과물은 프로젝트의 ./images/ 폴더에 자동 저장됩니다.",
       "version": "1.0.0",
       "author": {
         "name": "Mineru",
         "email": "mineru@usefullabs.co.kr"
       },
       "source": "./",
-      "category": "...",
+      "category": "image-generation",
       "homepage": "https://github.com/Mineru98/imagine",
       "tags": [
-        "...",
-        "..."
+        "image-generation",
+        "image-editing",
+        "codex",
+        "openai",
+        "chatgpt",
+        "gpt-image",
+        "ai-art",
+        "creative",
+        "text-to-image",
+        "image-to-image"
       ]
     }
   ]
