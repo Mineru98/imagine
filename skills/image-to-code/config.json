@@ -1,0 +1,14 @@
+{
+  "default_framework": "html-tailwind",
+  "tailwind_mode": "cdn",
+  "diff_threshold": 0.80,
+  "correction_passes": 1,
+  "max_image_edge": 2048,
+  "output_dir": "./pages",
+  "batch_concurrency": 1,
+  "models": {
+    "vision": "claude-sonnet-4-6",
+    "code": "claude-sonnet-4-6",
+    "critic": "claude-haiku-4-5-20251001"
+  }
+}

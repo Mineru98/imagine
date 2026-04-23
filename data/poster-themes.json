@@ -1,0 +1,37 @@
+{
+  "$schema_comment": "Poster theme catalog. Each entry is selectable via --theme and drives the AI background prompt plus the deterministic text palette. PRs adding themes should keep prompt free of on-image text, logos, faces, or letters.",
+  "themes": {
+    "cyber-gradient": {
+      "label": "Cyber Gradient",
+      "bg_prompt": "dark abstract tech background, neon violet and cyan gradient, circuit line motifs faint at edges, empty center space, no text, no logos",
+      "tokens": { "fg": "#f8fafc", "accent": "#a78bfa", "muted": "#94a3b8" },
+      "recommended_formats": ["poster", "banner", "card"]
+    },
+    "retro-print": {
+      "label": "Retro Print",
+      "bg_prompt": "retro offset print background, muted cream paper, halftone dots, warm red and teal accents, grainy texture, clean center margin, no text, no logos",
+      "tokens": { "fg": "#1f2937", "accent": "#c2410c", "muted": "#475569" },
+      "recommended_formats": ["poster", "card"]
+    },
+    "k-indie-poster": {
+      "label": "K-Indie Poster",
+      "bg_prompt": "Korean indie poster aesthetic, muted pastel color blocks, hand-drawn ink textures, irregular geometric shapes, negative space for copy, no text, no faces, no logos",
+      "tokens": { "fg": "#0f172a", "accent": "#ec4899", "muted": "#6b7280" },
+      "recommended_formats": ["poster", "card"]
+    },
+    "academic-clean": {
+      "label": "Academic Clean",
+      "bg_prompt": "minimal academic background, off-white paper, single subtle geometric accent, plenty of margin, serif-friendly layout cues, no text, no logos",
+      "tokens": { "fg": "#0f172a", "accent": "#1d4ed8", "muted": "#475569" },
+      "recommended_formats": ["poster", "banner"]
+    },
+    "festival-vibrant": {
+      "label": "Festival Vibrant",
+      "bg_prompt": "festival poster background, vivid saturated color blocks, confetti-like abstract shapes, high-energy composition, empty central band, no text, no logos, no readable letters",
+      "tokens": { "fg": "#ffffff", "accent": "#f59e0b", "muted": "#fde68a" },
+      "recommended_formats": ["poster", "banner", "card"]
+    }
+  },
+  "negative_prompt_global": "text, letters, typography, faces, people, watermark, logo text, readable words",
+  "default_theme": "cyber-gradient"
+}

@@ -10,7 +10,7 @@
     {
       "name": "imagine",
       "description": "Claude Code에서 \"imagine ...\" 한마디로 text→image, image→image 생성을 수행하는 스킬. ChatGPT 구독 세션을 재사용하므로 API 청구서가 따로 발생하지 않으며, 결과물은 프로젝트의 ./images/ 폴더에 자동 저장됩니다.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "Mineru",
         "email": "mineru@usefullabs.co.kr"
