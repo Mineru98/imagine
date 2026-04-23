@@ -1,0 +1,49 @@
+{
+  "size": "1536x1024",
+  "aspect_default": "16:9",
+  "allowed_aspects": ["16:9", "16:10", "4:3"],
+  "format": "png",
+  "transparent_bg_default": true,
+  "output_dir": "./images/slides",
+  "default_style": "flat-gradient",
+  "style_presets": {
+    "flat-gradient":      "flat vector illustration, soft gradient fill, clean lines, corporate but friendly",
+    "line-mono":          "monochrome line illustration, thin consistent strokes, geometric primitives, minimal fills",
+    "iso-geometric":      "isometric geometric illustration, soft long shadows, single accent color",
+    "abstract-geometric": "abstract geometric composition, layered color blocks, subtle grain",
+    "paper-cut":          "paper-cut illustration, layered construction, soft drop shadows between layers"
+  },
+  "position_rules": {
+    "allowed": ["right-40", "left-40"],
+    "default": "right-40",
+    "center_forbidden": true,
+    "safe_zone_ratio": 0.40
+  },
+  "prompt": {
+    "common_prefix": "flat vector illustration, soft gradient fill, clean lines, corporate but friendly, transparent background",
+    "text_space_right": "left 60% empty negative space for text block",
+    "text_space_left":  "right 60% empty negative space for text block",
+    "per_section_metaphor_hint": "single focal metaphor, no text, no charts, no numbers",
+    "user_metaphor_flag": "--metaphor"
+  },
+  "negative_prompt": "text, typography, letters, charts with numbers, cluttered, dark mood, photorealistic, photo of people, watermark, logo text",
+  "aspect_mapping": {
+    "16:9":  { "generate_size": "1536x1024", "final": { "width": 1920, "height": 1080 }, "crop": "center" },
+    "16:10": { "generate_size": "1536x1024", "final": { "width": 1920, "height": 1200 }, "crop": "transparent_pad_vertical" },
+    "4:3":   { "generate_size": "1536x1024", "final": { "width": 1440, "height": 1080 }, "crop": "transparent_pad_horizontal" }
+  },
+  "style_guardian": {
+    "manifest_keys": ["style", "palette_hex", "metaphor_family", "position"],
+    "shared_chain_with": "imagine-service-section",
+    "auto_carry_on": ["--keep", "같은 스타일로", "같은 톤으로", "이어서", "same style as before"],
+    "cross_deck_leak": false
+  },
+  "svg_export": {
+    "engine": "scripts/lib/vectorize.js",
+    "default": false
+  },
+  "batch": {
+    "concurrency": 1,
+    "shared_style_mode": true
+  }
+}

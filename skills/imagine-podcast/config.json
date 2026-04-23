@@ -1,0 +1,59 @@
+{
+  "ai_generate_size": "1024x1024",
+  "master_size": 3000,
+  "format": "jpeg",
+  "color_space": "rgb",
+  "chroma_subsampling": "4:4:4",
+  "jpeg_quality_default": 92,
+  "output_dir": "./images/podcast",
+  "apple_podcasts_spec": {
+    "width": 3000,
+    "height": 3000,
+    "aspect": "1:1",
+    "format": "jpeg",
+    "color_space": "RGB",
+    "min_bytes": 512000,
+    "max_bytes": 524288000,
+    "verify_default": true
+  },
+  "thumbnail_preview": {
+    "size": 55,
+    "save": true,
+    "filename_suffix": "_thumb55.jpg",
+    "entropy_warn_below": 3.0,
+    "contrast_warn_below": 0.25
+  },
+  "style_presets": {
+    "vintage-radio":   "vintage radio illustration, warm amber tones, retro microphone silhouette, subtle grain, centered composition, negative space at top and bottom for text overlay",
+    "modern-minimal":  "modern minimalist cover, single bold geometric motif, deep brand color, negative space at top and bottom for text overlay",
+    "neon-night":      "neon night cityscape silhouette, vibrant violet and cyan, single focal motif, negative space at top and bottom for text overlay",
+    "paper-grain":     "warm paper grain background, single hand-drawn motif, muted duotone, negative space at top and bottom for text overlay"
+  },
+  "negative_prompt": "text, letters, logo text, watermark, cluttered small details, tiny icons, thin outlines, photo of faces, photorealistic skin",
+  "positive_suffix": "bold silhouette, recognizable at small size, centered motif, solid or simple gradient background",
+  "compose_text": {
+    "module": "scripts/lib/compose-text.js",
+    "default_font": "Pretendard Bold",
+    "fallback_stack": "'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Inter',sans-serif",
+    "show_name_side": "center",
+    "safe_zone_ratio": 0.80
+  },
+  "upscale": {
+    "module": "scripts/lib/upscale.js",
+    "engine_default": "auto",
+    "esrgan_opt_in_flag": "--esrgan",
+    "jpeg_quality": 92
+  },
+  "episode_variant": {
+    "mode": "replace_title_only",
+    "manifest": "episode_list.jsonl",
+    "filename_pattern": "ep<nn>_<slug>.jpg",
+    "preserve_master_bg": true,
+    "never_regenerate_bg": true
+  },
+  "style_guardian": {
+    "manifest_keys": ["show_slug", "palette", "motif_family", "font"],
+    "scope": "per_show",
+    "cross_show_leak": false
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "$schema_comment": "Device preset catalog for imagine-mockup. Each entry defines the full canvas size, the inner screen rectangle (pixel-accurate; x/y/w/h from the top-left of the frame), and optional visual tuning. PRs adding presets should keep frames deterministic (no AI) and should NOT embed copyrighted logos or rendered product names — use neutral dark bezels.",
+  "devices": {
+    "iphone-16-pro": {
+      "label": "iPhone 16 Pro",
+      "canvas":  { "width": 1290, "height": 2796 },
+      "screen":  { "x": 24, "y": 24, "w": 1242, "h": 2748, "cornerRadius": 110 },
+      "body_corner_radius": 190,
+      "frame_fill": "#18181B",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "19.5:9"
+    },
+    "iphone-se": {
+      "label": "iPhone SE (3rd gen)",
+      "canvas":  { "width": 750, "height": 1334 },
+      "screen":  { "x": 30, "y": 120, "w": 690, "h": 1094, "cornerRadius": 8 },
+      "body_corner_radius": 60,
+      "frame_fill": "#1f2937",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "16:9"
+    },
+    "galaxy-s25": {
+      "label": "Samsung Galaxy S25",
+      "canvas":  { "width": 1080, "height": 2340 },
+      "screen":  { "x": 20, "y": 20, "w": 1040, "h": 2300, "cornerRadius": 72 },
+      "body_corner_radius": 120,
+      "frame_fill": "#111827",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "19.5:9"
+    },
+    "ipad-pro-13": {
+      "label": "iPad Pro 13\"",
+      "canvas":  { "width": 2048, "height": 2732 },
+      "screen":  { "x": 64, "y": 96, "w": 1920, "h": 2540, "cornerRadius": 40 },
+      "body_corner_radius": 90,
+      "frame_fill": "#1f2937",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "4.3:3"
+    },
+    "macbook-pro-14": {
+      "label": "MacBook Pro 14\"",
+      "canvas":  { "width": 3024, "height": 1964 },
+      "screen":  { "x": 48, "y": 48, "w": 2928, "h": 1830, "cornerRadius": 16 },
+      "body_corner_radius": 28,
+      "frame_fill": "#0f172a",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "16:10"
+    },
+    "macbook-pro-16": {
+      "label": "MacBook Pro 16\"",
+      "canvas":  { "width": 3456, "height": 2234 },
+      "screen":  { "x": 54, "y": 54, "w": 3348, "h": 2092, "cornerRadius": 16 },
+      "body_corner_radius": 28,
+      "frame_fill": "#0f172a",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "16:10"
+    },
+    "imac-24": {
+      "label": "iMac 24\"",
+      "canvas":  { "width": 4480, "height": 2520 },
+      "screen":  { "x": 80, "y": 80, "w": 4320, "h": 2160, "cornerRadius": 6 },
+      "body_corner_radius": 12,
+      "frame_fill": "#e5e7eb",
+      "bezel_fill": "#0a0a0a",
+      "aspect": "16:9"
+    },
+    "browser-mac": {
+      "label": "macOS browser window",
+      "canvas":  { "width": 1920, "height": 1200 },
+      "screen":  { "x": 24, "y": 72, "w": 1872, "h": 1104, "cornerRadius": 8 },
+      "body_corner_radius": 12,
+      "frame_fill": "#111827",
+      "bezel_fill": "#1f2937",
+      "aspect": "16:10"
+    },
+    "browser-windows": {
+      "label": "Windows browser window",
+      "canvas":  { "width": 1920, "height": 1200 },
+      "screen":  { "x": 16, "y": 64, "w": 1888, "h": 1120, "cornerRadius": 0 },
+      "body_corner_radius": 0,
+      "frame_fill": "#1f2937",
+      "bezel_fill": "#0f172a",
+      "aspect": "16:10"
+    }
+  },
+  "default": "iphone-16-pro"
+}
