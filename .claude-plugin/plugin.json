@@ -1,6 +1,6 @@
 {
   "name": "imagine",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "ChatGPT Plus/Pro 구독을 재사용해 Claude Code 안에서 이미지를 생성·편집하는 Codex 기반 플러그인. OpenAI API 키 없이 18개의 용도별 imagine 스킬(히어로·슬라이드·포스터·OG·썸네일·로고·아이콘·UI·캐릭터·픽셀·스프라이트·패턴·인물 보정·image-to-code 등)과 11개의 전문 에이전트를 제공하며, 결과물은 모두 프로젝트 ./images/ 폴더에 저장됩니다.",
   "author": {
     "name": "Mineru",

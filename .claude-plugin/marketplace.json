@@ -10,7 +10,7 @@
     {
       "name": "imagine",
       "description": "Claude Code에서 \"imagine ...\" 한마디로 text→image · image→image 생성을 수행하는 스킬 묶음. ChatGPT 구독 세션을 재사용하므로 API 청구서가 따로 발생하지 않고, 히어로/슬라이드/포스터/OG/썸네일/로고/아이콘/UI/목업/캐릭터/픽셀/스프라이트/패턴/인물 보정/image-to-code 등 18개의 전용 스킬과 11개의 전문 에이전트(prompt-director, style-guardian, visual-critic, vision-analyst, layout-architect, design-token-extractor, asset-extractor, a11y-advisor, code-generator, visual-verifier, character-card-keeper)를 제공합니다. 결과물은 프로젝트의 ./images/ 폴더에 자동 저장됩니다.",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "author": {
         "name": "Mineru",
         "email": "mineru@usefullabs.co.kr"
