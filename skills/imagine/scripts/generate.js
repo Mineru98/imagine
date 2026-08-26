@@ -4,10 +4,11 @@
  * Features: parallel generation, user config, history logging, format selection
  * Usage: node generate.js --prompt "a cat" --quality medium --size 1024x1024 --n 2 --format png --out-dir ./images
  */
-import { spawn, execSync } from "child_process";
-import { writeFile, mkdir, readFile } from "fs/promises";
+import { spawn } from "child_process";
+import { createServer } from "node:net";
+import { writeFile, mkdir, readFile, rename, rm } from "fs/promises";
 import { existsSync } from "fs";
-import { join, dirname } from "path";
+import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { validateImage } from "./verify.js";
 
@@ -15,7 +16,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OAUTH_PORT = 10531;
 const OAUTH_URL = `http://127.0.0.1:${OAUTH_PORT}`;
 const CONFIG_PATH = join(__dirname, "..", "config.json");
-const HISTORY_PATH = join(__dirname, "..", "history.jsonl");
 
 /* ── Config ── */
 async function loadConfig() {
@@ -25,54 +25,54 @@ async function loadConfig() {
   return {};
 }
 
-async function saveConfig(config) {
-  await writeFile(CONFIG_PATH, JSON.stringify(config, null, 2));
-}
-
 /* ── History ── */
 async function logHistory(entry) {
+  if (process.env.IMAGINE_HISTORY !== "1") return;
+  const historyPath = join(process.cwd(), ".imagine", "history.jsonl");
+  await mkdir(dirname(historyPath), { recursive: true });
   const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n";
-  await writeFile(HISTORY_PATH, line, { flag: "a" });
+  await writeFile(historyPath, line, { flag: "a", mode: 0o600 });
+}
+
+function allocateOutputPath(outDir, index, extension) {
+  const base = join(outDir, `gpt-img2_${Date.now()}_${index}`);
+  for (let version = 0; version < 10_000; version += 1) {
+    const suffix = version === 0 ? "" : `-v${version}`;
+    const candidate = `${base}${suffix}.${extension}`;
+    if (!existsSync(candidate)) return candidate;
+  }
+  throw new Error(`Could not allocate a non-conflicting output path in ${outDir}`);
 }
 
 /* ── Args ── */
 function parseArgs() {
   const args = process.argv.slice(2);
   const parsed = { prompt: "", quality: "", size: "", n: "1", format: "png", outDir: "" };
-  for (let i = 0; i < args.length; i += 2) {
-    const key = args[i].replace(/^--/, "");
-    const val = args[i + 1];
-    if (key in parsed) parsed[key] = val;
+  const names = new Map([["out-dir", "outDir"], ["prompt", "prompt"], ["quality", "quality"], ["size", "size"], ["n", "n"], ["format", "format"]]);
+  for (let i = 0; i < args.length; i += 1) {
+    const token = args[i];
+    if (!token.startsWith("--")) throw new Error(`Unexpected positional argument: ${token}`);
+    const name = names.get(token.slice(2));
+    if (!name) throw new Error(`Unknown option: ${token}`);
+    const value = args[i + 1];
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${token}`);
+    parsed[name] = value;
+    i += 1;
   }
-  if (!parsed.prompt) {
-    console.error("Usage: node generate.js --prompt <text> [--quality low|medium|high] [--size WxH] [--n 1-8] [--format png|jpeg|webp] [--out-dir <dir>]");
-    process.exit(1);
+  if (!parsed.prompt.trim()) {
+    throw new Error("Usage: node generate.js --prompt <text> [--quality low|medium|high] [--size 1024x1024|1024x1536|1536x1024] [--n 1-8] [--format png] [--out-dir <dir>]");
   }
+  if (parsed.prompt.length > 20_000) throw new Error("--prompt must be 20,000 characters or fewer.");
   return parsed;
 }
 
 function checkOAuthSession() {
-  const paths = [join(process.env.HOME, ".codex", "auth.json"), join(process.env.HOME, ".chatgpt-local", "auth.json")];
-  for (const p of paths) if (existsSync(p)) return true;
-  console.error("================================================================================");
-  console.error("ERROR: No OAuth session found.");
-  console.error("");
-  console.error("To fix this, run the following command in your terminal:");
-  console.error("  npx @openai/codex login");
-  console.error("");
-  console.error("This will authenticate you using your ChatGPT Plus/Pro subscription.");
-  console.error("After logging in, run this script again.");
-  console.error("================================================================================");
-  process.exit(1);
+  if (process.env.IMAGINE_ENABLE_LEGACY_PROXY !== "1") {
+    throw new Error("The legacy OAuth proxy is disabled. Use the host-native image tool, or set IMAGINE_ENABLE_LEGACY_PROXY=1 only for an explicitly configured legacy run.");
+  }
 }
 
 /* ── OAuth Proxy ── */
-function killProxyOnPort() {
-  try {
-    execSync(`lsof -ti:${OAUTH_PORT} | xargs kill -9 2>/dev/null`, { stdio: "ignore" });
-  } catch {}
-}
-
 async function healthCheck(attempt, maxAttempts) {
   for (let i = 0; i < maxAttempts; i++) {
     try {
@@ -84,17 +84,24 @@ async function healthCheck(attempt, maxAttempts) {
   return false;
 }
 
+async function isPortFree(port) {
+  return await new Promise((resolvePort) => {
+    const server = createServer();
+    server.once("error", () => resolvePort(false));
+    server.listen(port, "127.0.0.1", () => server.close(() => resolvePort(true)));
+  });
+}
+
 async function startOAuthProxy(maxRetries = 3) {
+  if (!(await isPortFree(OAUTH_PORT))) {
+    throw new Error(`Legacy proxy port ${OAUTH_PORT} is already in use; refusing to contact an unrelated local listener.`);
+  }
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     console.log(`[ima2] Starting OAuth proxy (attempt ${attempt}/${maxRetries})...`);
 
-    if (attempt > 1) {
-      console.log(`[ima2] Clearing port ${OAUTH_PORT}...`);
-      killProxyOnPort();
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    const child = spawn("npx", ["openai-oauth", "--port", String(OAUTH_PORT)], { stdio: ["ignore", "pipe", "pipe"], env: { ...process.env } });
+    const safeEnv = { ...process.env };
+    for (const key of ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_ORG_ID", "OPENAI_PROJECT_ID", "CODEX_ACCESS_TOKEN"]) delete safeEnv[key];
+    const child = spawn("npx", ["--yes", "openai-oauth", "--port", String(OAUTH_PORT)], { stdio: ["ignore", "pipe", "pipe"], env: safeEnv });
 
     child.stdout.on("data", d => { const m = d.toString().trim(); if (m) console.log(`[oauth] ${m}`); });
     child.stderr.on("data", d => {
@@ -131,8 +138,7 @@ async function startOAuthProxy(maxRetries = 3) {
   console.error("  3. Your OAuth session has expired completely.");
   console.error("");
   console.error("Manual fix steps:");
-  console.error("  1. Kill any process on port 10531:");
-  console.error(`     lsof -ti:${OAUTH_PORT} | xargs kill -9`);
+  console.error("  1. Stop only a proxy process that you started yourself, then retry:");
   console.error("  2. Re-authenticate:");
   console.error("     npx @openai/codex login");
   console.error("  3. Test proxy manually:");
@@ -204,38 +210,52 @@ async function generateOne({ prompt, quality, size }) {
 /* ── Main ── */
 async function main() {
   const args = parseArgs();
-  checkOAuthSession();
   const config = await loadConfig();
 
   // Apply defaults from config if not specified
   const quality = args.quality || config.default_quality || "medium";
   const size = args.size || config.default_size || "1024x1024";
   const format = args.format || config.default_format || "png";
-  const outDir = args.outDir || config.output_dir || join(process.cwd(), "images");
-  const count = Math.min(Math.max(parseInt(args.n) || 1, 1), 8);
+  const outDir = resolve(process.cwd(), args.outDir || config.output_dir || "images");
+  const count = Number(args.n);
+  if (!["low", "medium", "high"].includes(quality)) throw new Error(`Invalid --quality: ${quality}`);
+  if (!["1024x1024", "1024x1536", "1536x1024"].includes(size)) throw new Error(`Invalid --size: ${size}`);
+  if (format !== "png") throw new Error("Only PNG output is supported until real JPEG/WebP transcoding is available.");
+  if (!Number.isInteger(count) || count < 1 || count > 8) throw new Error("--n must be an integer from 1 to 8.");
+  checkOAuthSession();
 
   console.log(`[ima2] Config: quality=${quality}, size=${size}, format=${format}, n=${count}`);
 
   const proxy = await startOAuthProxy();
   const startTime = Date.now();
+  let saved = 0;
+  const failedOutputs = [];
 
   try {
     await mkdir(outDir, { recursive: true });
-    const results = await Promise.allSettled(Array.from({ length: count }, () => generateOne({ prompt: args.prompt, quality, size })));
+    const results = Array(count);
+    let cursor = 0;
+    const worker = async () => {
+      while (cursor < count) {
+        const index = cursor++;
+        try { results[index] = { status: "fulfilled", value: await generateOne({ prompt: args.prompt, quality, size }) }; }
+        catch (reason) { results[index] = { status: "rejected", reason }; }
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(2, count) }, worker));
 
-    let saved = 0;
     let totalTokens = 0;
     const outputs = [];
 
     const verifiedOutputs = [];
-  const failedOutputs = [];
 
   for (let i = 0; i < results.length; i++) {
     const r = results[i];
     if (r.status === "fulfilled" && r.value.b64) {
-      const filename = `gpt-img2_${Date.now()}_${i}.${format}`;
-      const outPath = join(outDir, filename);
-      await writeFile(outPath, Buffer.from(r.value.b64, "base64"));
+      const outPath = allocateOutputPath(outDir, i, format);
+      const tempPath = join(outDir, `.tmp-${process.pid}-${i}.png`);
+      await writeFile(tempPath, Buffer.from(r.value.b64, "base64"));
+      await rename(tempPath, outPath);
       console.log(`[ima2] [${i + 1}/${count}] Saved: ${outPath}`);
 
       // Verify the generated image
@@ -249,6 +269,7 @@ async function main() {
           if (!passed) console.error(`       - ${check}`);
         }
         failedOutputs.push({ path: outPath, checks: verifyResult.checks });
+        await rm(outPath, { force: true });
       }
 
       outputs.push(outPath);
@@ -271,7 +292,7 @@ async function main() {
   }
 
   proxy.kill();
-  process.exit(0);
+  process.exitCode = saved === count && failedOutputs.length === 0 ? 0 : 1;
 }
 
-main();
+main().catch((error) => { console.error(`[ima2] Error: ${error.message}`); process.exitCode = 2; });

@@ -1,116 +1,91 @@
 ---
 name: imagine
-description: Generate or edit images with Codex. Use this skill whenever the user says "imagine ...", asks to create an image from a text description, transform or restyle an existing image, produce artwork / illustrations / logos / concept art, make image variations, or asks for any kind of AI image generation or image-to-image editing. All outputs are saved inside the current project's `./images/` folder by default.
-argument-hint: "[--prompt <text>] [--n 1-8] [--size 1024x1024|1024x1536|1536x1024] [--quality low|medium|high] [--format png|jpeg|webp]"
+description: Create or edit workspace-bound raster images, including reference-guided generation, precise revisions, variations, and bounded batches. Use when a user asks for an AI-generated bitmap asset or invokes imagine. Do not use for SVG/HTML/code-native graphics, ordinary crop/resize/compression, image-to-code reconstruction, or visual analysis that does not generate an image.
+metadata:
+  short-description: "Reference-safe image generation and editing for Imagine"
 ---
 
-# imagine
+# Imagine
 
-Text→image and image→image generation using Codex. Results are saved inside the current project.
+`imagine` is the friendly, domain-aware image workflow for this plugin. Keep the
+user's creative intent and the project's assets safe while using the host's
+native image tool whenever it is available.
 
-## Where results go
+Read the focused references only when they apply:
 
-By default every generated file lands in **`./images/`**, resolved against the working directory you launched the skill from. The folder is created automatically on first run.
+- [workflows.md](references/workflows.md) for operation routing, real image
+  references, latest-result revisions, and multi-image batches.
+- [prompting.md](references/prompting.md) for faithful, assisted, and delegated
+  concept prompts plus domain presets.
+- [qa.md](references/qa.md) for deterministic and visual acceptance checks.
+- [installation.md](reference/installation.md) only for the legacy local CLI
+  setup or a user-requested troubleshooting session.
 
-You can override per-run with `--out-dir <path>` (generate) or `--out <path>` (edit).
+## Operating contract
 
-## Before the first run
+1. **Route the intent before generating.** Choose `generate`, `edit`,
+   `revision`, `variation`, or `batch`. A request to turn an image into HTML,
+   CSS, or a component belongs to `image-to-code`, not this skill. Ask one
+   concise A/B question only when the requested operation is genuinely
+   ambiguous.
+2. **Prefer the host-native image tool.** Use the actual `image_gen`/`image_edit`
+   input mechanism and pass every requested local image as an image input. If a
+   supported subscription bridge is already installed by the host, use it
+   instead of an ad-hoc API endpoint or third-party proxy.
+3. **Treat references as files, never as prose substitutes.** Resolve every
+   path, inspect edit targets when needed, and label inputs by role (edit
+   target, identity/content, style, or compositing insert). Never guess from a
+   cache or silently omit an unresolved image.
+4. **Preserve direct prompts.** Keep explicit subject, exact copy, brand names,
+   exclusions, ratio, quality, and invariants. Do not add “masterpiece”,
+   “8K”, negative prompts, or invented brand details. If the user opts into
+   assistance, make one transparent rewrite and show the final prompt before
+   generation; do not recursively rewrite it.
+5. **Keep revision ancestry.** “Change the result” means edit the latest output,
+   not the original source. Reattach the latest target and every still-needed
+   reference on each new invocation.
+6. **Batch deliberately.** A bare count repeats the same prompt. Words such as
+   “different concepts”, “directions”, “options”, or “alternatives” delegate
+   creative variation: make one complete, materially distinct prompt per
+   output and keep orchestration metadata out of the prompt. Run independent
+   jobs with concurrency 2 by default and never above 4; keep output-dependent
+   revisions sequential and never create a hidden anchor.
+7. **Save safely.** Keep outputs inside the active workspace by default, use a
+   descriptive non-conflicting filename, and refuse overwrite unless the user
+   explicitly asks for it. Stage output before committing it. Do not claim
+   JPEG/WebP when the bytes are PNG; either perform a real conversion or use
+   PNG-only output.
+8. **Validate before reporting success.** Confirm each output exists, decodes,
+   matches its extension, has plausible dimensions, and satisfies requested
+   alpha/transparency. Inspect the rendered result for subject, layout, exact
+   text, reference roles, preservation constraints, and obvious artifacts.
+   Permit at most one targeted corrective generation for an observable failure;
+   never run an automatic taste loop.
+9. **Disclose the transport honestly.** Model-backed edits transmit the image
+   to the configured generation service. Never expose or request API keys,
+   never read authentication files, and never describe subscription usage as
+   free or unlimited. Keep prompt history opt-in and workspace-scoped; do not
+   write credentials, image bytes, or raw downstream stderr to a log.
 
-Confirm the user has completed one-time setup: Node.js ≥ 18 and a Codex login (`npx @openai/codex login`). If either is missing, point them to `reference/installation.md` — do **not** attempt to install or log in on their behalf.
+## Domain-aware finishing
 
-## Parameter cheat sheet
+Keep the plugin's domain strengths when they change a real decision:
 
-Use these enum values exactly — anything else will be rejected.
+- Hero, OG, thumbnail, poster, and slide assets: generate the visual field,
+  then put exact copy and dense layout in deterministic composition code when
+  typography must be exact.
+- Character or product series: establish one canonical reference, then derive
+  later scenes or styles from that anchor.
+- Pixel, sprite, and seamless-pattern assets: use the existing deterministic
+  post-processors and run their grid/edge checks; do not ask the image model to
+  draw exact grids or labels.
+- `visual-critic` stays opt-in. It may report bounded suggestions, but it must
+  not silently trigger regeneration.
 
-- **Count (`--n`)**: `1` | `2` | `3` | `4` | `5` | `6` | `7` | `8` (default `1`)
-  - User says "3장" / "three variations" → `--n 3`.
-- **Size + aspect ratio (`--size`)**: pick one of three enums.
-  | Enum | Ratio | Use for |
-  |------|-------|---------|
-  | `1024x1024` | 1:1 square | avatars, icons, logos, social posts |
-  | `1024x1536` | 2:3 portrait | posters, character art, phone wallpapers (default) |
-  | `1536x1024` | 3:2 landscape | banners, wide scenes, desktop wallpapers |
-- **Quality (`--quality`)**: `low` | `medium` | `high` (default `medium`)
-  - `low`: drafts, throwaway ideation.
-  - `medium`: normal use.
-  - `high`: only when the user says "high quality", "detailed", "polished", "hero shot".
-- **Format (`--format`)**: `png` | `jpeg` | `webp` (default `png`)
+## Delivery
 
-## Usage
-
-Run the scripts from the **project root** so `./images` resolves to the intended folder. The skill lives under `<skill-root>/scripts/` (commonly `.claude/skills/imagine/` in Claude Code).
-
-### Generate from text
-
-```bash
-node <skill-root>/scripts/generate.js \
-  --prompt "a cyberpunk city at night, neon reflections on wet streets" \
-  --quality high \
-  --size 1024x1024 \
-  --n 2
-```
-
-| Flag | Required | Values | Default |
-|------|----------|--------|---------|
-| `--prompt` | yes | free text | — |
-| `--n` | no | `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` | `1` |
-| `--size` | no | `1024x1024` (1:1) \| `1024x1536` (2:3) \| `1536x1024` (3:2) | `1024x1536` |
-| `--quality` | no | `low` \| `medium` \| `high` | `medium` |
-| `--format` | no | `png` \| `jpeg` \| `webp` | `png` |
-| `--out-dir` | no | any path | `./images` |
-
-### Edit / restyle an existing image
-
-```bash
-node <skill-root>/scripts/edit.js \
-  --input ./photo.png \
-  --prompt "turn into a watercolor painting, soft pastels" \
-  --quality high \
-  --out ./images/photo-watercolor.png
-```
-
-Required: `--input`, `--prompt`, `--out`. Optional: `--quality`, `--size`, `--format`.
-`edit.js` preserves composition and subject pose while applying the described transform.
-
-### Verify a PNG (optional)
-
-```bash
-node <skill-root>/scripts/verify.js --input ./images/result.png
-```
-
-Useful when debugging truncated outputs. `generate.js` and `edit.js` already call this automatically and print ✅/❌ in their output.
-
-## Prompt crafting
-
-Pass the user's wording through largely as-is. The scripts already append quality boosters and negative prompts — don't double-wrap.
-
-## After a run
-
-1. Report the saved path(s) exactly as the script prints them (e.g. `./images/gpt-img2_<ts>_0.png`).
-2. If any file prints `❌ Verification failed`, re-run that single prompt once. If it fails again, surface the error rather than silently retrying.
-3. Do **not** edit the image directly or pipe it through other tools unless the user asked.
-
-## Failure handling
-
-If the script exits with one of these, stop and point the user at `reference/installation.md`:
-
-- `No OAuth session found` → they need to authenticate.
-- `Proxy did not respond` / `OAuth proxy failed to start` → missing dependency or port conflict.
-- `401` / `403` → expired token, re-login required.
-- `Rate limit` → they've hit their tier cap; suggest a retry window.
-
-These are all user-side credential or quota issues; resolving them requires the user's own terminal.
-
-## Layout
-
-```
-imagine/
-├── SKILL.md            ← this file
-├── config.json         ← defaults (quality / size / format / output_dir)
-├── reference/
-│   └── installation.md ← setup, config reference, troubleshooting
-└── scripts/
-    ├── generate.js     ← text → image
-    ├── edit.js         ← image → image
-    └── verify.js       ← PNG sanity check
-```
+For every successful output, show the inline image and report its absolute
+workspace path. For a batch, report each path and any failed job separately.
+Include the final prompt only when it was assisted or delegated; direct prompts
+remain unchanged. If a required constraint could not be met, say so instead of
+claiming success.

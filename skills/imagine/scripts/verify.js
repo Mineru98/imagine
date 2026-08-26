@@ -12,7 +12,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
-const MIN_PNG_SIZE = 100;
+const MIN_PNG_SIZE = 64;
 
 /* ── PNG Parser ── */
 async function parsePNG(filePath) {
@@ -23,6 +23,8 @@ async function parsePNG(filePath) {
     ihdrPresent: false,
     dimensions: null,
     chunks: [],
+    iendPresent: false,
+    complete: false,
   };
 
   if (buffer.length < 8) return result;
@@ -31,8 +33,9 @@ async function parsePNG(filePath) {
 
   let offset = 8;
   while (offset < buffer.length) {
-    if (offset + 8 > buffer.length) break;
+    if (offset + 12 > buffer.length) break;
     const length = buffer.readUInt32BE(offset);
+    if (offset + 12 + length > buffer.length) break;
     const type = buffer.slice(offset + 4, offset + 8).toString("ascii");
     result.chunks.push({ type, length, offset });
 
@@ -45,7 +48,11 @@ async function parsePNG(filePath) {
         };
       }
     }
-    if (type === "IEND") break;
+    if (type === "IEND") {
+      result.iendPresent = true;
+      result.complete = offset + 12 + length === buffer.length;
+      break;
+    }
     offset += 12 + length;
   }
 
@@ -60,6 +67,9 @@ export async function validateImage(filePath) {
     reasonableSize: false,
     pngSignature: false,
     ihdrPresent: false,
+    positiveDimensions: false,
+    iendPresent: false,
+    complete: false,
   };
 
   let pngInfo = null;
@@ -75,6 +85,11 @@ export async function validateImage(filePath) {
       pngInfo = await parsePNG(filePath);
       checks.pngSignature = pngInfo.signatureValid;
       checks.ihdrPresent = pngInfo.ihdrPresent;
+      checks.positiveDimensions = Boolean(
+        pngInfo.dimensions?.width > 0 && pngInfo.dimensions?.height > 0,
+      );
+      checks.iendPresent = pngInfo.iendPresent;
+      checks.complete = pngInfo.complete;
     }
   } catch (e) {
     error = e.message;

@@ -142,5 +142,6 @@ vite.config.ts.timestamp-*
 .omx
 .omc
 history.jsonl
+.imagine/
 .claude
 images

@@ -21,13 +21,13 @@
 
 > **매달 ChatGPT Plus $20 내고 있잖아요. 그거 이미 내고 있는데 왜 OpenAI Image API 크레딧을 또 삽니까?**
 
-`imagine`은 여러분이 **이미 결제하고 있는 ChatGPT Plus/Pro 세션**을 재사용해서, Claude Code 안에서 이미지를 **무제한에 가깝게** 뽑아냅니다.
+`imagine`은 여러분이 **이미 결제하고 있는 ChatGPT Plus/Pro 세션**을 재사용해서, Claude Code 안에서 구독 사용량 범위의 이미지를 생성합니다.
 
-- 💸 **API 키 0개, 청구서 0원** — Codex OAuth 프록시가 여러분의 ChatGPT 로그인 세션을 그대로 씁니다.
+- 🔐 **API 키를 요구하지 않음** — 호스트 네이티브 이미지 도구 또는 ChatGPT 인증 브리지를 우선 사용합니다.
 - 🤖 **Claude Code × ChatGPT 합법 동거** — Claude로 코딩하다가 `"imagine 사이버펑크 도시 3장"` 한 마디면 `./images/` 에 결과물이 착.
 - 🎯 **"imagine"이라고만 말하면 끝** — 프롬프트 엔지니어링 몰라도 스킬이 알아서 size / quality / n 을 매핑합니다.
 - 🖼️ **text→image 도 되고, image→image 리스타일도 됩니다** — 가지고 있던 사진을 수채화로, 로고를 네온 사인으로.
-- 📦 **결과물은 프로젝트 안에** — `./images/gpt-img2_<timestamp>_<index>.png` 로 깔끔하게 저장. 절대 Downloads 폴더 어지르지 않음.
+- 📦 **결과물은 프로젝트 안에** — 기본적으로 `./images/gpt-img2_<timestamp>_<index>.png` 로 저장합니다. 입력 이미지는 모델 기반 편집 시 설정된 생성 서비스로 전송됩니다.
 
 > 이 프로젝트는 [ktkarchive/codex-imagegen-2-skill-for-kimi](https://github.com/ktkarchive/codex-imagegen-2-skill-for-kimi) (Kimi CLI용) 을 참고하여 **Claude Code 플러그인 포맷**으로 재구성한 포크입니다. 원작자분께 리스펙트 🙏
 
@@ -83,18 +83,22 @@ Claude Code 세션 안에서 그냥 자연어로 말해보세요.
 
 이렇게 매핑해서 스크립트를 돌립니다.
 
-### 직접 CLI로 쓰고 싶다면
+### 레거시 CLI를 명시적으로 사용할 때
+
+일반 사용은 호스트 네이티브 이미지 도구를 권장합니다. 아래 로컬 CLI는
+호환성 경로이며, 실행자가 명시적으로 `IMAGINE_ENABLE_LEGACY_PROXY=1`을
+설정한 경우에만 동작합니다. API 키나 `auth.json`을 읽지 않습니다.
 
 ```bash
 # text → image
-node <skill-root>/scripts/generate.js \
+IMAGINE_ENABLE_LEGACY_PROXY=1 node <skill-root>/scripts/generate.js \
   --prompt "a cyberpunk city at night, neon reflections on wet streets" \
   --quality high \
   --size 1024x1024 \
   --n 2
 
 # image → image (리스타일)
-node <skill-root>/scripts/edit.js \
+IMAGINE_ENABLE_LEGACY_PROXY=1 node <skill-root>/scripts/edit.js \
   --input ./photo.png \
   --prompt "turn into a watercolor painting, soft pastels" \
   --out ./images/photo-watercolor.png
@@ -155,7 +159,7 @@ node <skill-root>/scripts/edit.js \
 |----|---------|
 | `default_quality` | `low` \| `medium` \| `high` |
 | `default_size` | `1024x1024` (1:1) \| `1024x1536` (2:3) \| `1536x1024` (3:2) |
-| `default_format` | `png` \| `jpeg` \| `webp` |
+| `default_format` | `png` (현재 runner는 PNG bytes만 검증) |
 | `output_dir` | 아무 경로 (절대경로면 글로벌 수집함으로 사용 가능) |
 
 ---
@@ -166,15 +170,14 @@ node <skill-root>/scripts/edit.js \
 Claude Code
     ↓ "imagine ..." 스킬 트리거
 generate.js / edit.js
-    ↓ spawn
-npx openai-oauth --port 10531   ← ChatGPT 세션 토큰으로 OpenAI API 프록시
-    ↓ HTTP
-OpenAI gpt-image 엔드포인트
+    ↓
+host-native image tool / supported ChatGPT bridge
     ↓ PNG stream
 ./images/gpt-img2_<ts>_<i>.png  ← 자동 저장 + PNG 무결성 검증
 ```
 
-프록시는 요청이 끝나는 즉시 자동 종료됩니다. 백그라운드 프로세스 안 남깁니다.
+레거시 proxy는 명시적으로 활성화한 경우에만 요청이 끝난 뒤 자식 프로세스를
+종료합니다. 일반 경로는 호스트 네이티브 이미지 도구를 사용합니다.
 
 ---
 
@@ -182,20 +185,12 @@ OpenAI gpt-image 엔드포인트
 
 | 증상 | 해결 |
 |------|------|
-| `No OAuth session found` | `npx @openai/codex login` 다시 실행 |
-| `Proxy did not respond` | `lsof -ti:10531 \| xargs kill -9` 로 포트 비우고 재시도 |
+| `Legacy OAuth proxy is disabled` | 호스트 네이티브 이미지 도구를 사용하거나, 호환성 실행에서만 `IMAGINE_ENABLE_LEGACY_PROXY=1` 설정 |
+| `Proxy did not respond` | 직접 소유한 레거시 proxy만 중지하고 재시도. 일반 경로는 네이티브 이미지 도구로 전환 |
 | `401` / `403` | 세션 만료 — 다시 로그인 |
 | `Rate limit` | ChatGPT 티어 한도 초과 — 몇 분 쉬고 `--n` 줄이기 |
 
 더 자세한 내용은 [`skills/imagine/reference/installation.md`](./skills/imagine/reference/installation.md) 참고.
-
----
-
-## 🙏 Credits
-
-- 원작: [**ktkarchive/codex-imagegen-2-skill-for-kimi**](https://github.com/ktkarchive/codex-imagegen-2-skill-for-kimi) — Kimi CLI 용 Codex 이미지 생성 스킬. 이 저장소는 해당 스킬의 아이디어와 구조를 참고하여 Claude Code 플러그인 포맷으로 재패키징했습니다.
-- OAuth 프록시: [`openai-oauth`](https://www.npmjs.com/package/openai-oauth)
-- Codex CLI: [`@openai/codex`](https://www.npmjs.com/package/@openai/codex)
 
 ---
 

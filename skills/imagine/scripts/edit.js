@@ -4,10 +4,11 @@
  * Features: user config, history logging, format selection
  * Usage: node edit.js --input photo.png --prompt "pen sketch" --quality high --size 1024x1536 --format png --out result.png
  */
-import { spawn, execSync } from "child_process";
-import { writeFile, readFile, mkdir } from "fs/promises";
+import { spawn } from "child_process";
+import { createServer } from "node:net";
+import { writeFile, readFile, mkdir, rename, rm } from "fs/promises";
 import { existsSync } from "fs";
-import { join, dirname } from "path";
+import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { validateImage } from "./verify.js";
 
@@ -15,7 +16,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OAUTH_PORT = 10531;
 const OAUTH_URL = `http://127.0.0.1:${OAUTH_PORT}`;
 const CONFIG_PATH = join(__dirname, "..", "config.json");
-const HISTORY_PATH = join(__dirname, "..", "history.jsonl");
 
 async function loadConfig() {
   if (existsSync(CONFIG_PATH)) { try { return JSON.parse(await readFile(CONFIG_PATH, "utf-8")); } catch {} }
@@ -23,40 +23,38 @@ async function loadConfig() {
 }
 
 async function logHistory(entry) {
+  if (process.env.IMAGINE_HISTORY !== "1") return;
+  const historyPath = join(process.cwd(), ".imagine", "history.jsonl");
+  await mkdir(dirname(historyPath), { recursive: true });
   const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n";
-  await writeFile(HISTORY_PATH, line, { flag: "a" });
+  await writeFile(historyPath, line, { flag: "a", mode: 0o600 });
 }
 
 function parseArgs() {
   const args = process.argv.slice(2);
   const parsed = { input: "", prompt: "", quality: "", size: "", format: "png", out: "" };
-  for (let i = 0; i < args.length; i += 2) { const key = args[i].replace(/^--/, ""); const val = args[i + 1]; if (key in parsed) parsed[key] = val; }
-  if (!parsed.input || !parsed.prompt || !parsed.out) {
-    console.error("Usage: node edit.js --input <img> --prompt <desc> [--quality low|medium|high] [--size WxH] [--format png|jpeg|webp] --out <file>");
-    process.exit(1);
+  const names = new Map([["input", "input"], ["prompt", "prompt"], ["quality", "quality"], ["size", "size"], ["format", "format"], ["out", "out"]]);
+  for (let i = 0; i < args.length; i += 1) {
+    const token = args[i];
+    if (!token.startsWith("--")) throw new Error(`Unexpected positional argument: ${token}`);
+    const name = names.get(token.slice(2));
+    if (!name) throw new Error(`Unknown option: ${token}`);
+    const value = args[i + 1];
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${token}`);
+    parsed[name] = value;
+    i += 1;
   }
+  if (!parsed.input || !parsed.prompt.trim() || !parsed.out) {
+    throw new Error("Usage: node edit.js --input <img> --prompt <desc> [--quality low|medium|high] [--size 1024x1024|1024x1536|1536x1024] [--format png] --out <file>");
+  }
+  if (parsed.prompt.length > 20_000) throw new Error("--prompt must be 20,000 characters or fewer.");
   return parsed;
 }
 
 function checkOAuthSession() {
-  const paths = [join(process.env.HOME, ".codex", "auth.json"), join(process.env.HOME, ".chatgpt-local", "auth.json")];
-  for (const p of paths) if (existsSync(p)) return true;
-  console.error("================================================================================");
-  console.error("ERROR: No OAuth session found.");
-  console.error("");
-  console.error("To fix this, run the following command in your terminal:");
-  console.error("  npx @openai/codex login");
-  console.error("");
-  console.error("This will authenticate you using your ChatGPT Plus/Pro subscription.");
-  console.error("After logging in, run this script again.");
-  console.error("================================================================================");
-  process.exit(1);
-}
-
-function killProxyOnPort() {
-  try {
-    execSync(`lsof -ti:${OAUTH_PORT} | xargs kill -9 2>/dev/null`, { stdio: "ignore" });
-  } catch {}
+  if (process.env.IMAGINE_ENABLE_LEGACY_PROXY !== "1") {
+    throw new Error("The legacy OAuth proxy is disabled. Use the host-native image tool, or set IMAGINE_ENABLE_LEGACY_PROXY=1 only for an explicitly configured legacy run.");
+  }
 }
 
 async function healthCheck(attempt, maxAttempts) {
@@ -70,17 +68,24 @@ async function healthCheck(attempt, maxAttempts) {
   return false;
 }
 
+async function isPortFree(port) {
+  return await new Promise((resolvePort) => {
+    const server = createServer();
+    server.once("error", () => resolvePort(false));
+    server.listen(port, "127.0.0.1", () => server.close(() => resolvePort(true)));
+  });
+}
+
 async function startOAuthProxy(maxRetries = 3) {
+  if (!(await isPortFree(OAUTH_PORT))) {
+    throw new Error(`Legacy proxy port ${OAUTH_PORT} is already in use; refusing to contact an unrelated local listener.`);
+  }
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     console.log(`[edit] Starting OAuth proxy (attempt ${attempt}/${maxRetries})...`);
 
-    if (attempt > 1) {
-      console.log(`[edit] Clearing port ${OAUTH_PORT}...`);
-      killProxyOnPort();
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    const child = spawn("npx", ["openai-oauth", "--port", String(OAUTH_PORT)], { stdio: ["ignore", "pipe", "pipe"], env: { ...process.env } });
+    const safeEnv = { ...process.env };
+    for (const key of ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_ORG_ID", "OPENAI_PROJECT_ID", "CODEX_ACCESS_TOKEN"]) delete safeEnv[key];
+    const child = spawn("npx", ["--yes", "openai-oauth", "--port", String(OAUTH_PORT)], { stdio: ["ignore", "pipe", "pipe"], env: safeEnv });
 
     child.stdout.on("data", d => { const m = d.toString().trim(); if (m) console.log(`[oauth] ${m}`); });
     child.stderr.on("data", d => {
@@ -117,8 +122,7 @@ async function startOAuthProxy(maxRetries = 3) {
   console.error("  3. Your OAuth session has expired completely.");
   console.error("");
   console.error("Manual fix steps:");
-  console.error("  1. Kill any process on port 10531:");
-  console.error(`     lsof -ti:${OAUTH_PORT} | xargs kill -9`);
+  console.error("  1. Stop only a proxy process that you started yourself, then retry:");
   console.error("  2. Re-authenticate:");
   console.error("     npx @openai/codex login");
   console.error("  3. Test proxy manually:");
@@ -182,34 +186,39 @@ async function editImage({ input, prompt, quality, size }) {
 
 async function main() {
   const args = parseArgs();
-  checkOAuthSession();
   const config = await loadConfig();
 
   const quality = args.quality || config.default_quality || "medium";
   const size = args.size || config.default_size || "1024x1024";
   const format = args.format || config.default_format || "png";
+  if (!["low", "medium", "high"].includes(quality)) throw new Error(`Invalid --quality: ${quality}`);
+  if (!["1024x1024", "1024x1536", "1536x1024"].includes(size)) throw new Error(`Invalid --size: ${size}`);
+  if (format !== "png") throw new Error("Only PNG output is supported until real JPEG/WebP transcoding is available.");
+  checkOAuthSession();
 
   if (!existsSync(args.input)) { console.error(`ERROR: Input file not found: ${args.input}`); process.exit(1); }
 
   const proxy = await startOAuthProxy();
   const startTime = Date.now();
+  let verified = false;
 
   try {
     const result = await editImage({ input: args.input, prompt: args.prompt, quality, size });
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
     // Rename output extension if format differs
-    let outPath = args.out;
-    if (!outPath.endsWith(`.${format}`)) {
-      outPath = outPath.replace(/\.[^.]+$/, `.${format}`);
-    }
+    const outPath = resolve(process.cwd(), args.out.endsWith(".png") ? args.out : `${args.out}.png`);
+    if (existsSync(outPath)) throw new Error(`Refusing to overwrite existing output: ${outPath}`);
     await mkdir(dirname(outPath), { recursive: true });
-    await writeFile(outPath, Buffer.from(result.b64, "base64"));
+    const tempPath = join(dirname(outPath), `.tmp-${process.pid}-${Date.now()}.png`);
+    await writeFile(tempPath, Buffer.from(result.b64, "base64"));
+    await rename(tempPath, outPath);
 
     console.log(`[edit] Saved: ${outPath} (${elapsed}s)`);
 
     // Verify the edited image
     const verifyResult = await validateImage(outPath);
+    verified = verifyResult.valid;
     if (verifyResult.valid) {
       console.log(`[edit] ✅ Verified: ${verifyResult.png?.dimensions?.width}x${verifyResult.png?.dimensions?.height}`);
     } else {
@@ -217,6 +226,7 @@ async function main() {
       for (const [check, passed] of Object.entries(verifyResult.checks)) {
         if (!passed) console.error(`       - ${check}`);
       }
+      await rm(outPath, { force: true });
     }
 
     if (result.usage) console.log("[edit] Usage:", JSON.stringify(result.usage));
@@ -227,10 +237,10 @@ async function main() {
     console.error("       Hint: If the proxy returned 401/403, your OAuth session may have expired.");
     console.error("       Run \"npx @openai/codex login\" to refresh.");
     console.error("       If you see \"rate limit\" errors, wait a few minutes and retry.");
-    proxy.kill(); process.exit(1);
+    proxy.kill(); process.exitCode = 1; return;
   }
   proxy.kill();
-  process.exit(0);
+  process.exitCode = verified ? 0 : 1;
 }
 
-main();
+main().catch((error) => { console.error(`[edit] Error: ${error.message}`); process.exitCode = 2; });

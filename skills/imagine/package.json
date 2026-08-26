@@ -1,0 +1,9 @@
+{
+  "name": "@mineru98/imagine-core",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
+

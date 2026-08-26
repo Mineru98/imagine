@@ -1,0 +1,11 @@
+{
+  "name": "imagine-plugin",
+  "version": "1.2.2",
+  "private": true,
+  "scripts": {
+    "test": "node tests/imagine-contract.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

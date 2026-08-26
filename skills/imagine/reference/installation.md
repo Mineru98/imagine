@@ -8,9 +8,9 @@ Everything you need to do **once** before the `imagine` skill will work. The mai
 
 | Requirement | Why |
 |-------------|-----|
-| **Node.js ≥ 18** | Scripts use native `fetch`, `AbortSignal.timeout`, and ES modules. |
-| **ChatGPT Plus or Pro subscription** | Image generation is billed against your ChatGPT account via the Codex OAuth proxy — no separate API key needed. |
-| **`npx` available** | The scripts spawn `npx openai-oauth` to start the local proxy on first run. |
+| **Node.js ≥ 18** | Only needed for the optional legacy local CLI; the package declares its ES module boundary explicitly. |
+| **A host image tool or ChatGPT-authenticated bridge** | Image generation uses the configured subscription route; no separate Images API key is required. |
+| **`npx` available** | Only needed for an explicitly enabled legacy proxy run. |
 
 Optional but useful: a host CLI that knows how to invoke skills (Claude Code, Kimi CLI, etc.). You can also run the scripts directly with `node`.
 
@@ -18,18 +18,17 @@ Optional but useful: a host CLI that knows how to invoke skills (Claude Code, Ki
 
 ## 2. One-time authentication
 
-The skill talks to OpenAI through a **local OAuth proxy** that reuses your ChatGPT session. You authenticate once with the Codex CLI, which writes a token file the proxy reads.
+The preferred route is the host-native image tool or a supported ChatGPT-authenticated
+Codex bridge. The old local OAuth proxy is retained only as an explicit compatibility
+path and is disabled by default; this avoids trusting a fixed unauthenticated local
+port during ordinary image work.
 
 ```bash
 npx @openai/codex login
 ```
 
-This creates `auth.json` under one of:
-
-- `$HOME/.codex/auth.json` (preferred)
-- `$HOME/.chatgpt-local/auth.json` (fallback)
-
-The scripts auto-detect either location. If neither exists, they exit early with a message telling you to run the login command.
+Complete the login through the supported host/bridge. The Imagine scripts do not read
+or inspect `auth.json`.
 
 **When to re-run login:**
 - First install.
@@ -40,13 +39,14 @@ The scripts auto-detect either location. If neither exists, they exit early with
 
 ## 3. The OAuth proxy (auto-managed)
 
-On every run, `generate.js` / `edit.js`:
+Only when `IMAGINE_ENABLE_LEGACY_PROXY=1` is explicitly set, `generate.js` / `edit.js`:
 
-1. Check for an OAuth session file (see above).
+1. Start the compatibility proxy as a child process with API-related environment
+   variables removed.
 2. Spawn `npx openai-oauth --port 10531` as a child process.
 3. Poll `http://127.0.0.1:10531/v1/models` up to 30× (500 ms each) until it's healthy.
 4. Do the image call.
-5. Kill the proxy on exit.
+5. Kill only the child process that this invocation started.
 
 You should **not** need to start the proxy manually. If you do want to, the exact command is:
 
@@ -54,7 +54,8 @@ You should **not** need to start the proxy manually. If you do want to, the exac
 npx openai-oauth --port 10531
 ```
 
-**Port:** `10531` is hardcoded. If something else is holding that port, scripts will retry 3 times (clearing the port between attempts) before giving up.
+**Port:** `10531` is a legacy compatibility default. If another process is holding
+that port, the scripts fail without killing or modifying the unrelated process.
 
 ---
 
@@ -75,7 +76,7 @@ npx openai-oauth --port 10531
 |-----|-----------------|-------|
 | `default_quality` | `low`, `medium`, `high` | Higher = more tokens and slower. Most prompts look great at `medium`. |
 | `default_size` | `1024x1024`, `1024x1536`, `1536x1024` | Square / portrait / landscape. |
-| `default_format` | `png`, `jpeg`, `webp` | Output file encoding. The skill verifies PNGs; JPEG/WebP skip PNG-specific checks. |
+| `default_format` | `png` | The current runner writes and verifies PNG bytes. JPEG/WebP require a future real transcoding adapter; extensions are never relabeled. |
 | `output_dir` | Any path | **Relative paths resolve against the current working directory.** The default `./images` means generated files land in `<project-root>/images/` when you invoke the skill from a project root. Use `~/Pictures/...` or an absolute path if you want a global collection instead. |
 
 You can always override per-invocation with CLI flags:
@@ -101,7 +102,9 @@ To centralize outputs globally instead, set an absolute path in `config.json`, e
 
 ## 6. History log
 
-Every run appends a single JSON line to `history.jsonl` (next to `SKILL.md`) with prompt, settings, output paths, token usage, and elapsed time. Treat it as an audit trail, not a database — it's safe to delete or rotate.
+History is opt-in: set `IMAGINE_HISTORY=1` to append a redacted run receipt under
+the active workspace's `.imagine/history.jsonl`. It is off by default and never
+contains authentication data or image bytes.
 
 If you're sharing this skill via git, consider `.gitignore`-ing `history.jsonl` so you don't leak prompt history.
 
@@ -111,8 +114,8 @@ If you're sharing this skill via git, consider `.gitignore`-ing `history.jsonl` 
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| `No OAuth session found` | `auth.json` missing. | `npx @openai/codex login` |
-| `Proxy did not respond` (3× retries) | Port 10531 held by a stale process, or `openai-oauth` not installed. | `lsof -ti:10531 \| xargs kill -9`, then retry. Or install: `npm i -g openai-oauth`. |
+| `Legacy OAuth proxy is disabled` | Native tool/bridge should be used. | Use the host-native image tool; set `IMAGINE_ENABLE_LEGACY_PROXY=1` only for an explicitly configured compatibility run. |
+| `Proxy did not respond` | Port 10531 is held, or the compatibility package is unavailable. | Stop the process you own, or return to the native tool/bridge route. |
 | `OAuth proxy returned 401` / `403` | Token expired or revoked. | Re-run `npx @openai/codex login`. |
 | `OAuth proxy returned 429` / `Rate limit` | Hit ChatGPT tier limit. | Wait a few minutes; reduce `--n`; drop `--quality` to `medium`. |
 | `No image data received` | Stream interrupted or model refused. | Retry once. If persistent, simplify the prompt. |
@@ -123,7 +126,7 @@ If you're sharing this skill via git, consider `.gitignore`-ing `history.jsonl` 
 
 ## 8. Uninstalling
 
-The skill itself is just this folder — delete it to remove. Additionally:
-
-- `rm -rf ~/.codex ~/.chatgpt-local` → revokes the local OAuth session.
-- There is nothing installed globally unless you ran `npm i -g openai-oauth`; remove with `npm rm -g openai-oauth`.
+Remove this skill folder through the host's normal plugin manager. If the legacy
+proxy was installed globally, remove only that package with your package manager;
+do not delete broad authentication directories. Revoke a ChatGPT session through
+the official Codex/ChatGPT account controls.

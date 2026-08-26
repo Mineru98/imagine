@@ -1,0 +1,4 @@
+interface:
+  display_name: "Imagine"
+  short_description: "Create or edit workspace-bound raster images"
+  default_prompt: "Use $imagine for image generation, reference-guided edits, latest-result revisions, or bounded visual batches. Preserve direct prompts, attach real local references, and report validated workspace paths."
