@@ -15,7 +15,7 @@ argument-hint: "<concept> [--style gradient-abstract|isometric-illust|3d-glow|pr
 - "landing hero", "landing page hero", "SaaS hero image"
 - "히어로 비주얼 뽑아줘"
 
-애매하게 "배너", "썸네일"만 들어오면 이 스킬이 아니라 각각 `imagine-og`, `imagine-thumb`로 라우팅. 1턴 질문으로 맥락 확인.
+애매하게 "배너", "썸네일"만 들어오면 이 스킬이 아니라 `imagine-og`(소셜 카드/블로그 썸네일)로 라우팅. 1턴 질문으로 맥락 확인.
 
 ## 핵심 제약
 
@@ -92,4 +92,4 @@ argument-hint: "<concept> [--style gradient-abstract|isometric-illust|3d-glow|pr
 - 공용 인프라 재사용: `oauth-session.js`, `output-allocator.js`, `request-planner.js`, `bg-remove.js`.
 - 텍스트 합성 모듈(`compose-text.js`)은 **사용하지 않는다** — 이 스킬의 원칙은 "히어로에 글자 넣지 않기".
 - Style Guardian의 브랜드 팔레트가 있으면 `--brand-color` 미지정 시 자동 주입.
-- `imagine-thumb`(유튜브 썸네일) · `imagine-og`(소셜 카드) · `imagine-icon`(앱 아이콘)과 구분: "랜딩 히어로" 맥락은 항상 여기.
+- `imagine-og`(소셜 카드) · `imagine-icon`(앱 아이콘)과 구분: "랜딩 히어로" 맥락은 항상 여기.

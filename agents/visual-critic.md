@@ -105,5 +105,4 @@ JSON 1개. 마크다운·프로즈·코드펜스 없이 그대로.
 - **`prompt-director`**: 생성 *이전*의 프롬프트 보정 담당. Critic은 생성 *이후*의 평가 담당. 같은 턴에 자동으로 동시 실행하지 않는다(설계상 금지).
 - **`style-guardian`**: 시리즈 일관성 유지용. Critic의 평가 결과를 manifest에 자동 주입하지 않는다 — 사용자가 명시적으로 "이 평가를 스타일 카드에 반영해줘"라고 요청해야만.
 - **`image-to-code` / Visual Verifier**: 그쪽은 스펙·pixel diff 기반의 결정적 검증. 이 Critic은 **주관적 미학 감상**으로 역할이 다르며, image-to-code 파이프라인에 자동으로 끼어들지 않는다.
-- **`character-card-keeper`**: 이 에이전트가 카드를 수정·갱신하지 않는다. 평가만.
 - **Run Manifest**: 평가 결과를 manifest에 자동으로 append하지 않는다. 사용자가 출력 JSON을 직접 저장할 수는 있다.

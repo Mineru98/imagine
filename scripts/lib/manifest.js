@@ -3,7 +3,7 @@
 // ── Run Manifest (imagine + image-to-code) ──────────────────────────────────
 // Shape returned by createManifest(skillName, params):
 //   {
-//     skill:        'imagine' | 'imagine-thumb' | 'imagine-og' | 'image-to-code' | …
+//     skill:        'imagine' | 'imagine-og' | 'image-to-code' | …
 //     ts:           ISO-8601 string
 //     params:       sanitized clone of the user-supplied params
 //     outputs:      string[]          // absolute or project-relative file paths

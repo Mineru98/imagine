@@ -1,6 +1,6 @@
 # imagine 하네스 운영 가이드
 
-Claude Code × `imagine` 플러그인을 **하나의 작업 환경(harness)** 으로 보고, 18개 스킬 + 11개 에이전트 + 공용 스크립트를 어떻게 조합해 써야 하는지 정리한 운영 문서다. README는 "한 줄 설치·30초 데모"에 초점이 맞춰져 있고, 이 문서는 **반복 작업·팀 워크플로우·자동화** 관점에서의 가이드라인이다.
+Claude Code × `imagine` 플러그인을 **하나의 작업 환경(harness)** 으로 보고, 8개 스킬 + 10개 에이전트 + 공용 스크립트를 어떻게 조합해 써야 하는지 정리한 운영 문서다. README는 "한 줄 설치·30초 데모"에 초점이 맞춰져 있고, 이 문서는 **반복 작업·팀 워크플로우·자동화** 관점에서의 가이드라인이다.
 
 > 대상 독자: 이 플러그인을 1회성 데모가 아니라 실제 디자인·콘텐츠 파이프라인에 끼워 넣을 사람.
 
@@ -14,14 +14,14 @@ flowchart TB
     CC[Claude Code 호스트]
     Manifest[".claude-plugin/<br/>plugin.json"]
 
-    subgraph Skills["skills/ — 18개 진입 스킬"]
+    subgraph Skills["skills/ — 8개 진입 스킬"]
         IMG[imagine]
         I2C[image-to-code]
-        DOM["imagine-hero / -slide /<br/>-poster / -og / -thumb /<br/>-podcast / -logo / -icon /<br/>-ui / -empty / -mockup /<br/>-char / -pixel / -sprite /<br/>-pattern / -portrait"]
+        DOM["imagine-hero / -slide /<br/>-og / -logo /<br/>-icon / -ui"]
     end
 
-    subgraph Agents["agents/ — 11개 에이전트"]
-        AUTO["자동 호출<br/>prompt-director,<br/>style-guardian,<br/>character-card-keeper,<br/>vision-analyst,<br/>layout-architect,<br/>design-token-extractor,<br/>asset-extractor,<br/>a11y-advisor,<br/>code-generator,<br/>visual-verifier"]
+    subgraph Agents["agents/ — 10개 에이전트"]
+        AUTO["자동 호출<br/>prompt-director,<br/>style-guardian,<br/>vision-analyst,<br/>layout-architect,<br/>design-token-extractor,<br/>asset-extractor,<br/>a11y-advisor,<br/>code-generator,<br/>visual-verifier"]
         OPT["명시 호출 전용<br/>visual-critic"]
     end
 
@@ -30,7 +30,7 @@ flowchart TB
         RETRY[retry-policy.js]
         ALLOC[output-allocator.js]
         MAN[manifest.js]
-        REST["batch-orchestrator,<br/>style-guardian,<br/>sheet-composer …"]
+        REST["batch-orchestrator,<br/>style-guardian,<br/>compose-text …"]
     end
 
     Proxy["npx openai-oauth<br/>:10531 (자동 spawn/kill)"]
@@ -73,7 +73,7 @@ flowchart TB
 
 ---
 
-## 3. 18개 스킬 — 작업 의도별 라우팅 표
+## 3. 8개 스킬 — 작업 의도별 라우팅 표
 
 `imagine`은 만능 진입점이지만, **목적이 분명하면 도메인 특화 스킬을 쓰는 편이 결과 품질·일관성 모두 낫다.** 도메인 스킬은 적절한 size/quality/n 기본값과 도메인 컨벤션(시트 컴포지션, 텍스트 오버레이 등)을 이미 내장하고 있기 때문이다.
 
@@ -84,20 +84,10 @@ flowchart TB
 | 디자인 스크린샷 → HTML/Tailwind | `image-to-code` | 결과는 `./pages/<slug>/` |
 | 랜딩 페이지 히어로 | `imagine-hero` | 3:2 강제, 텍스트 여백 보장 |
 | 키노트/슬라이드 일러스트 | `imagine-slide` | 섹션 시리즈 일관성 우선 |
-| 이벤트 포스터/배너/카드 | `imagine-poster` | 3종 세트 자동 생성 |
 | OG/소셜 카드 (대량) | `imagine-og` | `--bulk` 지원 |
-| YouTube 썸네일 | `imagine-thumb` | A/B 변형 |
-| 팟캐스트 커버 | `imagine-podcast` | 3000×3000 고정 |
 | 로고 시안 | `imagine-logo` | 마크 + 워드마크 + SVG 벡터화 |
 | 앱 아이콘 세트 | `imagine-icon` | iOS·Android·Web 사이즈 일괄 |
 | UI 무드 보드 | `imagine-ui` | 레퍼런스용 |
-| 엠프티 스테이트 | `imagine-empty` | 라이트/다크 쌍 |
-| 기기 목업 | `imagine-mockup` | 앱스토어 스펙 |
-| 게임 캐릭터 시리즈 | `imagine-char` | character-card-keeper와 한 쌍 |
-| 픽셀 아트 | `imagine-pixel` | 정수 픽셀 격자 보장 |
-| 스프라이트 시트 | `imagine-sprite` | Unity/Godot 호환 |
-| seamless 패턴 | `imagine-pattern` | 타일링 검증 포함 |
-| 인물 사진 보정 | `imagine-portrait` | 로컬 처리 — 외부 송출 없음 |
 
 ### 라우팅 결정 흐름
 
@@ -105,7 +95,7 @@ flowchart TB
 flowchart TD
     Start([사용자 입력]) --> Q1{코드 / HTML /<br/>Tailwind / 마크업<br/>키워드?}
     Q1 -- yes --> I2C[/"image-to-code<br/>→ ./pages/&lt;slug&gt;/"/]
-    Q1 -- no --> Q2{도메인 키워드?<br/>썸네일·로고·아이콘·<br/>포스터·OG·히어로 …}
+    Q1 -- no --> Q2{도메인 키워드?<br/>로고·아이콘·OG·<br/>히어로·슬라이드·UI …}
     Q2 -- yes --> DOM[/"imagine-&lt;도메인&gt;<br/>도메인 기본값 적용"/]
     Q2 -- no --> Q3{입력에 이미지<br/>포함?}
     Q3 -- "텍스트만" --> GEN[/"imagine generate<br/>text → image"/]
@@ -119,7 +109,7 @@ flowchart TD
 
 ---
 
-## 4. 11개 에이전트 — 책임·호출 시점
+## 4. 10개 에이전트 — 책임·호출 시점
 
 에이전트는 **사용자가 직접 호출하는 게 아니다.** 스킬의 파이프라인이 적절한 시점에 부른다. 다만 어떤 에이전트가 자동으로 끼어들고, 어떤 에이전트가 명시 호출 전용인지 **알아두면 결과를 통제할 수 있다.**
 
@@ -130,7 +120,6 @@ flowchart LR
         direction TB
         PD[prompt-director<br/>한국어/추상 → 영문 1패스]
         SG[style-guardian<br/>시리즈 토큰 일관성]
-        CC[character-card-keeper<br/>캐릭터 카드 유지]
         VA[vision-analyst]
         LA[layout-architect]
         DTE[design-token-extractor]
@@ -145,7 +134,6 @@ flowchart LR
 
     User -- "/imagine ..." --> PD
     PD --> SG
-    SG --> CC
     User -- "/image-to-code ..." --> VA
     VA --> LA & DTE & AE & A11
     LA & DTE & AE & A11 --> CG
@@ -160,7 +148,6 @@ flowchart LR
 |---|---|---|
 | `prompt-director` | 한국어/추상 입력 감지 시 1패스 영역 보정 | 모델이 추상 형용사 못 알아들음 → 결과 평이해짐 |
 | `style-guardian` | 시리즈 스킬에서 토큰 일관성 강제 | 같은 시리즈 안에서 톤이 튐 |
-| `character-card-keeper` | `imagine-char` 시리즈에서 캐릭터 카드 유지 | 같은 캐릭터가 매 컷 다른 얼굴이 됨 |
 | `vision-analyst` → `layout-architect` / `design-token-extractor` / `asset-extractor` / `a11y-advisor` → `code-generator` → `visual-verifier` | `image-to-code` 파이프라인 고정 순서 | 시각 분석 누락 → 마크업이 디자인을 못 따라감 |
 
 ### 명시 호출 전용 (opt-in)
@@ -267,7 +254,7 @@ sequenceDiagram
 ### 8.1 동일 시리즈를 일관성 있게 뽑고 싶을 때
 
 1. 첫 호출에서 *마음에 드는 1장* 을 골라낸다.
-2. 그 결과물의 토큰을 `style-guardian` 에이전트가 카드로 굳히도록 시리즈 스킬(`imagine-slide`, `imagine-poster`, `imagine-char` 등)을 사용한다.
+2. 그 결과물의 토큰을 `style-guardian` 에이전트가 카드로 굳히도록 시리즈 스킬(`imagine-slide`, `imagine-og` 등)을 사용한다.
 3. 후속 호출은 같은 스킬·같은 카드 안에서 `--n` 으로 변형만 추가한다.
 4. 카드를 갱신하고 싶으면 명시적으로 "이 평가를 카드에 반영해줘" 라고 요청 — 자동 갱신은 일어나지 않는다.
 

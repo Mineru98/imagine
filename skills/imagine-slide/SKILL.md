@@ -99,4 +99,4 @@ argument-hint: "<--sections \"A, B, C\" | chapter \"<title>\"> [--style flat-gra
 - **`imagine-hero`**: 랜딩 페이지 히어로는 그 스킬. 이 스킬은 슬라이드 내부 섹션 이미지 세트 전용.
 - **`compose-text.js`**: 사용하지 않음 — 슬라이드에 글자 얹기는 슬라이드 도구가 담당.
 - **`vectorize.js`**: `--svg` 옵션에서만 호출. potrace 부재 시 graceful passthrough.
-- **`imagine-og`(소셜 카드)·`imagine-thumb`(YouTube)**과 구분: 이 스킬은 발표 데크 전용, 비율(16:9/16:10/4:3)과 40% 세이프존이 다르다.
+- **`imagine-og`(소셜 카드)**와 구분: 이 스킬은 발표 데크 전용, 비율(16:9/16:10/4:3)과 40% 세이프존이 다르다.

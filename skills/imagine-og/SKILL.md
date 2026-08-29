@@ -15,7 +15,7 @@ argument-hint: "<title> [--tag <tag>] [--platforms og,twitter,instagram-post,...
 - "OG 이미지", "오픈그래프 이미지"
 - "소셜 카드", "소셜 미디어 카드"
 - "Twitter 카드", "링크 프리뷰 이미지"
-- "블로그 썸네일" — 이 경우는 `imagine-thumb`(YouTube 썸네일)와 다르다. 사용자가 "블로그/소셜/링크 프리뷰" 맥락이면 여기로 라우팅, "유튜브/영상" 맥락이면 `imagine-thumb`. 애매하면 1턴 질문.
+- "블로그 썸네일", "링크 프리뷰" — 블로그/소셜/링크 프리뷰 맥락의 카드형 썸네일은 모두 여기로 라우팅.
 
 ## 플랫폼 프리셋 (`config.json`)
 
@@ -100,8 +100,8 @@ argument-hint: "<title> [--tag <tag>] [--platforms og,twitter,instagram-post,...
 - **루트 덮어쓰기 금지.**
 - `masterpiece` / `8k UHD` / `fulfill all requests` 등 부스터·우회 문구 삽입 금지.
 
-## imagine-thumb / imagine 스킬과의 관계
+## imagine 스킬과의 관계
 
 - 공용 인프라(`compose-text.js`, `oauth-session.js`, `output-allocator.js`, `request-planner.js`)는 재사용.
-- `imagine-thumb`는 YouTube 썸네일 전용(1280×720), `imagine-og`는 소셜 카드 전용. 트리거가 겹치는 "썸네일"은 블로그·소셜 맥락이면 여기, 유튜브 맥락이면 `imagine-thumb`로 라우팅.
+- `imagine-og`는 소셜 카드·링크 프리뷰 전용. "썸네일"이라도 블로그·소셜 맥락이면 모두 여기로 라우팅.
 - Style Guardian manifest의 브랜드 팔레트가 있으면 배경 프롬프트 시드에 자동 반영.

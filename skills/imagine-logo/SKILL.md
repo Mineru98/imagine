@@ -82,7 +82,7 @@ argument-hint: "<company-or-concept> [--name <wordmark>] [--direction-count 3..6
 ## imagine 계열 스킬과의 관계
 
 - 공용 인프라 재사용: `oauth-session.js`, `output-allocator.js`, `request-planner.js`.
-- **`compose-text.js` 공유**: `imagine-thumb`·`imagine-og`와 동일 코드베이스. 워드마크 합성 로직을 이 스킬에 복제하지 않는다.
+- **`compose-text.js` 공유**: `imagine-og`와 동일 코드베이스. 워드마크 합성 로직을 이 스킬에 복제하지 않는다.
 - **`vectorize.js`는 이 스킬 전용** (potrace 래핑). 다른 스킬에서 호출해도 되지만, 기본 사용처는 로고.
 - Style Guardian과 분리: 브랜드 정체성은 자체 `_manifest.json`으로만 관리.
 - `imagine-icon`과 구분: 앱 아이콘은 `imagine-icon` (플랫폼별 다중 해상도), 로고는 여기 (단일 마크 + 워드마크 + SVG).

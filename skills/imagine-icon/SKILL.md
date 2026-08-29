@@ -111,4 +111,4 @@ no text
 - 공용 인프라 재사용: `oauth-session.js`, `output-allocator.js`, `request-planner.js`.
 - 텍스트 합성 모듈(`compose-text.js`)은 이 스킬에서 사용하지 않는다 (아이콘에 글자를 얹지 않는 것이 원칙).
 - Style Guardian의 브랜드 팔레트가 있으면 `--android-background` 자동 선택 시 우선 참고.
-- `imagine-thumb`(YouTube 썸네일) / `imagine-og`(소셜 카드)와는 별개 산출물. 트리거가 겹치는 "아이콘" 키워드는 항상 여기.
+- `imagine-og`(소셜 카드)와는 별개 산출물. 트리거가 겹치는 "아이콘" 키워드는 항상 여기.
