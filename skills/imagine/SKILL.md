@@ -18,8 +18,8 @@ Read the focused references only when they apply:
 - [prompting.md](references/prompting.md) for faithful, assisted, and delegated
   concept prompts plus domain presets.
 - [qa.md](references/qa.md) for deterministic and visual acceptance checks.
-- [installation.md](reference/installation.md) only for the legacy local CLI
-  setup or a user-requested troubleshooting session.
+- [installation.md](reference/installation.md) only for the Codex CLI setup of
+  the local scripts or a user-requested troubleshooting session.
 
 ## Operating contract
 
@@ -29,9 +29,11 @@ Read the focused references only when they apply:
    concise A/B question only when the requested operation is genuinely
    ambiguous.
 2. **Prefer the host-native image tool.** Use the actual `image_gen`/`image_edit`
-   input mechanism and pass every requested local image as an image input. If a
-   supported subscription bridge is already installed by the host, use it
-   instead of an ad-hoc API endpoint or third-party proxy.
+   input mechanism and pass every requested local image as an image input. When
+   the host has no native image tool (for example Claude Code), run
+   `scripts/generate.js` / `scripts/edit.js`: they drive the official Codex CLI's
+   built-in `image_gen` tool with the user's ChatGPT login. Never use an ad-hoc
+   API endpoint or a third-party proxy.
 3. **Treat references as files, never as prose substitutes.** Resolve every
    path, inspect edit targets when needed, and label inputs by role (edit
    target, identity/content, style, or compositing insert). Never guess from a

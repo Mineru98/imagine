@@ -23,11 +23,11 @@
 
 `imagine`은 여러분이 **이미 결제하고 있는 ChatGPT Plus/Pro 세션**을 재사용해서, Claude Code 안에서 구독 사용량 범위의 이미지를 생성합니다.
 
-- 🔐 **API 키를 요구하지 않음** — 호스트 네이티브 이미지 도구 또는 ChatGPT 인증 브리지를 우선 사용합니다.
+- 🔐 **API 키를 요구하지 않음** — v2부터 공식 Codex CLI(`codex exec`)의 내장 `image_gen` 도구를 ChatGPT 로그인 그대로 씁니다. 서드파티 프록시가 없습니다.
 - 🤖 **Claude Code × ChatGPT 합법 동거** — Claude로 코딩하다가 `"imagine 사이버펑크 도시 3장"` 한 마디면 `./images/` 에 결과물이 착.
 - 🎯 **"imagine"이라고만 말하면 끝** — 프롬프트 엔지니어링 몰라도 스킬이 알아서 size / quality / n 을 매핑합니다.
 - 🖼️ **text→image 도 되고, image→image 리스타일도 됩니다** — 가지고 있던 사진을 수채화로, 로고를 네온 사인으로.
-- 📦 **결과물은 프로젝트 안에** — 기본적으로 `./images/gpt-img2_<timestamp>_<index>.png` 로 저장합니다. 입력 이미지는 모델 기반 편집 시 설정된 생성 서비스로 전송됩니다.
+- 📦 **결과물은 프로젝트 안에** — 기본적으로 `./images/imagine_<timestamp>_<index>.png` 로 저장합니다. 입력 이미지는 모델 기반 편집 시 설정된 생성 서비스로 전송됩니다.
 
 > 이 프로젝트는 [ktkarchive/codex-imagegen-2-skill-for-kimi](https://github.com/ktkarchive/codex-imagegen-2-skill-for-kimi) (Kimi CLI용) 을 참고하여 **Claude Code 플러그인 포맷**으로 재구성한 포크입니다. 원작자분께 리스펙트 🙏
 
@@ -45,21 +45,27 @@
 
 끝입니다. 정말로. 두 줄.
 
-### 2. ChatGPT 한 번만 로그인 (최초 1회)
+### 2. Codex CLI 설치 + ChatGPT 로그인 (최초 1회)
 
 ```bash
-npx @openai/codex login
+npm install -g @openai/codex@latest
+codex login
 ```
 
-브라우저가 열리면 평소 쓰는 ChatGPT 계정으로 로그인하세요. `~/.codex/auth.json` 에 세션이 저장됩니다.
+브라우저가 열리면 평소 쓰는 ChatGPT 계정으로 로그인하세요. `codex login status` 가 `Logged in using ChatGPT` 이면 준비 끝입니다.
 
 ### 3. 요구사항
 
 | 항목 | 요구 버전 / 조건 |
 |------|------------------|
-| **Node.js** | ≥ 18 (native `fetch` 사용) |
+| **Node.js** | ≥ 18 |
+| **Codex CLI** | `image_generation` 기능이 stable 인 최신 버전 (0.162 이상에서 확인) |
 | **ChatGPT 구독** | Plus 또는 Pro (이미지 쿼터가 붙어 있는 플랜) |
-| **`npx`** | OAuth 프록시 자동 실행용 |
+
+> **v1 → v2 변경점**: v1 은 `npx openai-oauth` 로컬 프록시로 Responses API 를 직접 불렀지만, 최신 Codex 백엔드에서
+> `tool_choice: "required"` 요청이 400 으로 거부되어 이미지가 나오지 않았습니다. v2 는 프록시를 걷어 내고
+> `codex exec` 가 내장 `image_gen` 도구를 한 번 호출하게 한 뒤, `~/.codex/generated_images/<thread_id>/` 에 저장된 결과를
+> 프로젝트로 복사합니다. `IMAGINE_ENABLE_LEGACY_PROXY` 는 더 이상 쓰지 않습니다.
 
 ---
 
@@ -83,26 +89,28 @@ Claude Code 세션 안에서 그냥 자연어로 말해보세요.
 
 이렇게 매핑해서 스크립트를 돌립니다.
 
-### 레거시 CLI를 명시적으로 사용할 때
+### 스크립트를 직접 실행할 때
 
-일반 사용은 호스트 네이티브 이미지 도구를 권장합니다. 아래 로컬 CLI는
-호환성 경로이며, 실행자가 명시적으로 `IMAGINE_ENABLE_LEGACY_PROXY=1`을
-설정한 경우에만 동작합니다. API 키나 `auth.json`을 읽지 않습니다.
+API 키나 `auth.json` 을 읽지 않고, 실행 중에는 `OPENAI_API_KEY` 를 자식 프로세스에서 지워
+구독 대신 API 과금으로 넘어가는 일을 막습니다.
 
 ```bash
 # text → image
-IMAGINE_ENABLE_LEGACY_PROXY=1 node <skill-root>/scripts/generate.js \
+node <skill-root>/scripts/generate.js \
   --prompt "a cyberpunk city at night, neon reflections on wet streets" \
   --quality high \
   --size 1024x1024 \
   --n 2
 
 # image → image (리스타일)
-IMAGINE_ENABLE_LEGACY_PROXY=1 node <skill-root>/scripts/edit.js \
+node <skill-root>/scripts/edit.js \
   --input ./photo.png \
   --prompt "turn into a watercolor painting, soft pastels" \
   --out ./images/photo-watercolor.png
 ```
+
+`--size` 와 `--quality` 는 내장 도구에 비율·품질 지시로 전달됩니다. 실제 픽셀 크기는 모델이 정하며(예: 1:1 → 1254×1254),
+저장 후 검증 단계에서 출력합니다. Codex 실행 파일 경로를 바꾸려면 `IMAGINE_CODEX_BIN` 을 지정하세요.
 
 ---
 
@@ -160,14 +168,15 @@ IMAGINE_ENABLE_LEGACY_PROXY=1 node <skill-root>/scripts/edit.js \
 Claude Code
     ↓ "imagine ..." 스킬 트리거
 generate.js / edit.js
-    ↓
-host-native image tool / supported ChatGPT bridge
-    ↓ PNG stream
-./images/gpt-img2_<ts>_<i>.png  ← 자동 저장 + PNG 무결성 검증
+    ↓ codex login status (준비 확인)
+codex exec --json --sandbox read-only -   ← 지시문은 stdin, 편집 대상은 --image
+    ↓ 내장 image_gen 1회 호출 (셸·파일 접근 금지 지시)
+~/.codex/generated_images/<thread_id>/*.png
+    ↓ 복사
+./images/imagine_<ts>_<i>.png  ← 저장 + PNG 무결성 검증
 ```
 
-레거시 proxy는 명시적으로 활성화한 경우에만 요청이 끝난 뒤 자식 프로세스를
-종료합니다. 일반 경로는 호스트 네이티브 이미지 도구를 사용합니다.
+`--n` 은 이미지마다 별도 Codex 세션을 열어 최대 2개씩 병렬로 돌립니다.
 
 ---
 
@@ -175,9 +184,9 @@ host-native image tool / supported ChatGPT bridge
 
 | 증상 | 해결 |
 |------|------|
-| `Legacy OAuth proxy is disabled` | 호스트 네이티브 이미지 도구를 사용하거나, 호환성 실행에서만 `IMAGINE_ENABLE_LEGACY_PROXY=1` 설정 |
-| `Proxy did not respond` | 직접 소유한 레거시 proxy만 중지하고 재시도. 일반 경로는 네이티브 이미지 도구로 전환 |
-| `401` / `403` | 세션 만료 — 다시 로그인 |
+| `Codex CLI is not ready` | `npm install -g @openai/codex@latest` 후 `codex login` |
+| `Codex finished without producing an image` | 모델이 도구를 부르지 않았거나 거부함 — 프롬프트를 단순하게 바꿔 한 번 재시도 |
+| `Codex did not finish within 300s` | 네트워크·한도 지연 — 잠시 후 재시도 |
 | `Rate limit` | ChatGPT 티어 한도 초과 — 몇 분 쉬고 `--n` 줄이기 |
 
 더 자세한 내용은 [`skills/imagine/reference/installation.md`](./skills/imagine/reference/installation.md) 참고.

@@ -1,6 +1,6 @@
 {
   "name": "imagine-plugin",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "test": "node tests/imagine-contract.mjs"
